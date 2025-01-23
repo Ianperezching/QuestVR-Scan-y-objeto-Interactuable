@@ -21,6 +21,7 @@ public class SceneController : MonoBehaviour
 
     private ARPlaneManager _planeManager;
     private bool _isVisible = true;
+    private bool _isSpawning = false;
 
     void Start()
     {
@@ -32,20 +33,34 @@ public class SceneController : MonoBehaviour
         }
 
         _togglePlanesAccion.action.performed += OnTogglePlanesAction;
-        _activateAction.action.performed += OnActivateAction;
+        _activateAction.action.performed += StartSpawning;
+        _activateAction.action.canceled += StopSpawning;
     }
 
-    private void OnActivateAction(InputAction.CallbackContext obj)
+    private void StartSpawning(InputAction.CallbackContext obj)
     {
-        SpawnWeldingSphere();
-    }
-
-    private void SpawnWeldingSphere()
-    {
-        if (_GrabbableSphere != null && weldingGunTip != null)
+        if (!_isSpawning)
         {
-            Vector3 spawnPosition = weldingGunTip.position;
-            Instantiate(_GrabbableSphere, spawnPosition, Quaternion.identity);
+            _isSpawning = true;
+            StartCoroutine(SpawnWeldingSpheres());
+        }
+    }
+
+    private void StopSpawning(InputAction.CallbackContext obj)
+    {
+        _isSpawning = false;
+    }
+
+    private IEnumerator SpawnWeldingSpheres()
+    {
+        while (_isSpawning)
+        {
+            if (_GrabbableSphere != null && weldingGunTip != null)
+            {
+                Vector3 spawnPosition = weldingGunTip.position;
+                Instantiate(_GrabbableSphere, spawnPosition, Quaternion.identity);
+            }
+            yield return new WaitForSeconds(0.3f);
         }
     }
 
@@ -89,6 +104,8 @@ public class SceneController : MonoBehaviour
     private void OnDestroy()
     {
         _togglePlanesAccion.action.performed -= OnTogglePlanesAction;
-        _activateAction.action.performed -= OnActivateAction;
+        _activateAction.action.performed -= StartSpawning;
+        _activateAction.action.canceled -= StopSpawning;
     }
 }
+
