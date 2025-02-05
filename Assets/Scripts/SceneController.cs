@@ -15,29 +15,42 @@ public class SceneController : MonoBehaviour
     [SerializeField]
     private InputActionReference _activateAction;
     [SerializeField]
-    private GameObject _GrabbableSphere;  
+    private GameObject _GrabbableSphere;
     [SerializeField]
-    private Transform weldingGunTip;      
+    private Transform weldingGunTip1;
+    [SerializeField]
+    private Transform weldingGunTip2;
+    [SerializeField]
+    private GameObject weldingGunModel1;
+    [SerializeField]
+    private GameObject weldingGunModel2;
+
+    [Header("Cambio de Pistola")]
+    [SerializeField]
+    private Button gun1Button;
+    [SerializeField]
+    private Button gun2Button;
 
     [Header("Configuración de la línea objetivo")]
     [SerializeField]
-    private Transform PuntoA; 
+    private Transform PuntoA;
     [SerializeField]
-    private Transform PuntoB; 
+    private Transform PuntoB;
     [SerializeField]
-    private float tolerance = 0.1f; 
+    private float tolerance = 0.1f;
 
     [Header("UI")]
     [SerializeField]
-    private Button calculateButton;  
+    private Button calculateButton;
     [SerializeField]
-    private TMP_Text resultText;         
+    private TMP_Text resultText;
 
     private ARPlaneManager _planeManager;
     private bool _isVisible = true;
     private bool _isSpawning = false;
+    private Transform currentGunTip;
 
-    private List<GameObject> spawnedSpheres = new List<GameObject>(); 
+    private List<GameObject> spawnedSpheres = new List<GameObject>();
 
     void Start()
     {
@@ -56,6 +69,20 @@ public class SceneController : MonoBehaviour
         {
             calculateButton.onClick.AddListener(CalculatePrecision);
         }
+
+        if (gun1Button != null)
+        {
+            gun1Button.onClick.AddListener(() => SwitchGun(weldingGunTip1, weldingGunModel1, weldingGunModel2));
+        }
+
+        if (gun2Button != null)
+        {
+            gun2Button.onClick.AddListener(() => SwitchGun(weldingGunTip2, weldingGunModel2, weldingGunModel1));
+        }
+
+        currentGunTip = weldingGunTip1; // Pistola por defecto
+        weldingGunModel1.SetActive(true);
+        weldingGunModel2.SetActive(false);
     }
 
     private void StartSpawning(InputAction.CallbackContext obj)
@@ -76,14 +103,21 @@ public class SceneController : MonoBehaviour
     {
         while (_isSpawning)
         {
-            if (_GrabbableSphere != null && weldingGunTip != null)
+            if (_GrabbableSphere != null && currentGunTip != null)
             {
-                Vector3 spawnPosition = weldingGunTip.position;
+                Vector3 spawnPosition = currentGunTip.position;
                 GameObject sphere = Instantiate(_GrabbableSphere, spawnPosition, Quaternion.identity);
-                spawnedSpheres.Add(sphere); // Añadir esfera a la lista
+                spawnedSpheres.Add(sphere);
             }
             yield return new WaitForSeconds(0.3f);
         }
+    }
+
+    private void SwitchGun(Transform newGunTip, GameObject newGunModel, GameObject oldGunModel)
+    {
+        currentGunTip = newGunTip;
+        newGunModel.SetActive(true);
+        oldGunModel.SetActive(false);
     }
 
     private void OnTogglePlanesAction(InputAction.CallbackContext obj)
@@ -161,6 +195,17 @@ public class SceneController : MonoBehaviour
         {
             calculateButton.onClick.RemoveListener(CalculatePrecision);
         }
+
+        if (gun1Button != null)
+        {
+            gun1Button.onClick.RemoveListener(() => SwitchGun(weldingGunTip1, weldingGunModel1, weldingGunModel2));
+        }
+
+        if (gun2Button != null)
+        {
+            gun2Button.onClick.RemoveListener(() => SwitchGun(weldingGunTip2, weldingGunModel2, weldingGunModel1));
+        }
     }
 }
+
 
