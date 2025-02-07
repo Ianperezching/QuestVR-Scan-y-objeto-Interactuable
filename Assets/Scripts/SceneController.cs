@@ -45,12 +45,26 @@ public class SceneController : MonoBehaviour
     [SerializeField]
     private TMP_Text resultText;
 
+    // UI para estadísticas
+    [SerializeField]
+    private TMP_Text angleText;
+    [SerializeField]
+    private TMP_Text arcLengthText;
+    [SerializeField]
+    private TMP_Text speedText;
+    [SerializeField]
+    private TMP_Text trajectoryText;
+
     private ARPlaneManager _planeManager;
     private bool _isVisible = true;
     private bool _isSpawning = false;
     private Transform currentGunTip;
 
     private List<GameObject> spawnedSpheres = new List<GameObject>();
+    private Vector3 lastPosition;
+    private float totalDistance;
+    private float elapsedTime;
+    private List<float> speedMeasurements = new List<float>();
 
     void Start()
     {
@@ -83,6 +97,13 @@ public class SceneController : MonoBehaviour
         currentGunTip = weldingGunTip1; // Pistola por defecto
         weldingGunModel1.SetActive(true);
         weldingGunModel2.SetActive(false);
+
+        lastPosition = currentGunTip.position;
+    }
+
+    void Update()
+    {
+        UpdateStatistics();
     }
 
     private void StartSpawning(InputAction.CallbackContext obj)
@@ -185,27 +206,39 @@ public class SceneController : MonoBehaviour
         resultText.text = $"Precisión: {precisionPercentage:F2}%";
     }
 
-    private void OnDestroy()
+    private void UpdateStatistics()
     {
-        _togglePlanesAccion.action.performed -= OnTogglePlanesAction;
-        _activateAction.action.performed -= StartSpawning;
-        _activateAction.action.canceled -= StopSpawning;
+        if (currentGunTip == null) return;
 
-        if (calculateButton != null)
-        {
-            calculateButton.onClick.RemoveListener(CalculatePrecision);
-        }
+        // Ángulo de Arco (Ángulo entre el electrodo y la superficie)
+        Vector3 surfaceNormal = Vector3.up;
+        float arcAngle = Vector3.Angle(currentGunTip.forward, surfaceNormal);
+        angleText.text = $"Ángulo de Arco: {arcAngle:F2}°";
 
-        if (gun1Button != null)
+        // Longitud de Arco (Distancia de la punta de la pistola a la superficie)
+        RaycastHit hit;
+        float arcLength = 0f;
+        if (Physics.Raycast(currentGunTip.position, -currentGunTip.up, out hit))
         {
-            gun1Button.onClick.RemoveListener(() => SwitchGun(weldingGunTip1, weldingGunModel1, weldingGunModel2));
+            arcLength = hit.distance;
         }
+        arcLengthText.text = $"Longitud de Arco: {arcLength:F2}m";
 
-        if (gun2Button != null)
+        // Velocidad de Recorrido (Rapidez con la que se mueve la pistola)
+        float distanceMoved = Vector3.Distance(lastPosition, currentGunTip.position);
+        elapsedTime += Time.deltaTime;
+        if (elapsedTime > 0.1f)
         {
-            gun2Button.onClick.RemoveListener(() => SwitchGun(weldingGunTip2, weldingGunModel2, weldingGunModel1));
+            float speed = distanceMoved / elapsedTime;
+            speedMeasurements.Add(speed);
+            if (speedMeasurements.Count > 10) speedMeasurements.RemoveAt(0);
+            speedText.text = $"Velocidad: {speed:F2} m/s";
+            elapsedTime = 0;
         }
+        lastPosition = currentGunTip.position;
+
+        // Trayectoria (Si el movimiento fue estable o errático)
+        float speedVariance = Mathf.Abs(speedMeasurements.Count > 1 ? Mathf.Max(speedMeasurements.ToArray()) - Mathf.Min(speedMeasurements.ToArray()) : 0);
+        trajectoryText.text = $"Trayectoria: {(speedVariance < 0.1f ? "Estable" : "Irregular")}";
     }
 }
-
-
