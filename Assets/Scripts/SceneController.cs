@@ -94,7 +94,7 @@ public class SceneController : MonoBehaviour
             gun2Button.onClick.AddListener(() => SwitchGun(weldingGunTip2, weldingGunModel2, weldingGunModel1));
         }
 
-        currentGunTip = weldingGunTip1; // Pistola por defecto
+        currentGunTip = weldingGunTip1; 
         weldingGunModel1.SetActive(true);
         weldingGunModel2.SetActive(false);
 
@@ -210,12 +210,12 @@ public class SceneController : MonoBehaviour
     {
         if (currentGunTip == null) return;
 
-        // Ángulo de Arco (Ángulo entre el electrodo y la superficie)
+        
         Vector3 surfaceNormal = Vector3.up;
         float arcAngle = Vector3.Angle(currentGunTip.forward, surfaceNormal);
         angleText.text = $"Ángulo de Arco: {arcAngle:F2}°";
 
-        // Longitud de Arco (Distancia de la punta de la pistola a la superficie)
+       
         RaycastHit hit;
         float arcLength = 0f;
         if (Physics.Raycast(currentGunTip.position, -currentGunTip.up, out hit))
@@ -224,7 +224,7 @@ public class SceneController : MonoBehaviour
         }
         arcLengthText.text = $"Longitud de Arco: {arcLength:F2}m";
 
-        // Velocidad de Recorrido (Rapidez con la que se mueve la pistola)
+       
         float distanceMoved = Vector3.Distance(lastPosition, currentGunTip.position);
         elapsedTime += Time.deltaTime;
         if (elapsedTime > 0.1f)
@@ -237,7 +237,7 @@ public class SceneController : MonoBehaviour
         }
         lastPosition = currentGunTip.position;
 
-        // Trayectoria (Si el movimiento fue estable o errático)
+      
         float speedVariance = Mathf.Abs(speedMeasurements.Count > 1 ? Mathf.Max(speedMeasurements.ToArray()) - Mathf.Min(speedMeasurements.ToArray()) : 0);
         trajectoryText.text = $"Trayectoria: {(speedVariance < 0.1f ? "Estable" : "Irregular")}";
     }
