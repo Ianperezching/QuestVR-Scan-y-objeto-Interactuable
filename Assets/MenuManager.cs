@@ -7,9 +7,10 @@ public class MenuManager : MonoBehaviour
     public GameObject opcionesPanel;
     public GameObject creditosPanel;
     public GameObject dificultadPanel;
+    public GameObject modoPanel;
     public string CambiodeScena;
     private bool menuisactive = true;
-    public static string dificultadSeleccionada;
+    public GameSettings gameSettings;
 
     public void Play()
     {
@@ -19,7 +20,14 @@ public class MenuManager : MonoBehaviour
 
     public void SeleccionarDificultad(string dificultad)
     {
-        dificultadSeleccionada = dificultad;
+        gameSettings.dificultad = dificultad;
+        dificultadPanel.SetActive(false);
+        modoPanel.SetActive(true);
+    }
+
+    public void SeleccionarModo(string modo)
+    {
+        gameSettings.modo = modo;
         SceneManager.LoadScene(CambiodeScena);
     }
 
@@ -53,9 +61,18 @@ public class MenuManager : MonoBehaviour
         menuisactive = !menuisactive;
     }
 
+    public void irMenu()
+    {
+        MenuPanel.SetActive(true);
+        creditosPanel.SetActive(false);
+        opcionesPanel.SetActive(false);
+        dificultadPanel.SetActive(false);
+        modoPanel.SetActive(false);
+        menuisactive = true;
+    }
+
     public void Salir()
     {
         Application.Quit();
     }
 }
-
