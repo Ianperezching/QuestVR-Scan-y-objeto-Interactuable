@@ -1951,6 +1951,7 @@ MonoBehaviour:
   arcLengthText: {fileID: 856615115}
   speedText: {fileID: 72580393}
   trajectoryText: {fileID: 1909135154}
+  gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!1 &611435247
 GameObject:
   m_ObjectHideFlags: 0

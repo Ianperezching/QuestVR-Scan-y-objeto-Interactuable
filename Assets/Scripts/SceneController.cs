@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
@@ -44,8 +45,6 @@ public class SceneController : MonoBehaviour
     private Button calculateButton;
     [SerializeField]
     private TMP_Text resultText;
-
-    // UI para estadísticas
     [SerializeField]
     private TMP_Text angleText;
     [SerializeField]
@@ -55,26 +54,24 @@ public class SceneController : MonoBehaviour
     [SerializeField]
     private TMP_Text trajectoryText;
 
+    [Header("Configuración del juego")]
+    [SerializeField]
+    private GameSettings gameSettings;
+
     private ARPlaneManager _planeManager;
     private bool _isVisible = true;
     private bool _isSpawning = false;
     private Transform currentGunTip;
-
     private List<GameObject> spawnedSpheres = new List<GameObject>();
     private Vector3 lastPosition;
-    private float totalDistance;
     private float elapsedTime;
     private List<float> speedMeasurements = new List<float>();
+    private List<float> recordedAngles = new List<float>();
+    private List<float> recordedArcLengths = new List<float>();
 
     void Start()
     {
         _planeManager = GetComponent<ARPlaneManager>();
-
-        if (_planeManager == null)
-        {
-            Debug.LogError("-> No se encontró ARPlaneManager");
-        }
-
         _togglePlanesAccion.action.performed += OnTogglePlanesAction;
         _activateAction.action.performed += StartSpawning;
         _activateAction.action.canceled += StopSpawning;
@@ -94,51 +91,8 @@ public class SceneController : MonoBehaviour
             gun2Button.onClick.AddListener(() => SwitchGun(weldingGunTip2, weldingGunModel2, weldingGunModel1));
         }
 
-        currentGunTip = weldingGunTip1; 
-        weldingGunModel1.SetActive(true);
-        weldingGunModel2.SetActive(false);
-
+        SetModeSettings();
         lastPosition = currentGunTip.position;
-    }
-
-    void Update()
-    {
-        UpdateStatistics();
-    }
-
-    private void StartSpawning(InputAction.CallbackContext obj)
-    {
-        if (!_isSpawning)
-        {
-            _isSpawning = true;
-            StartCoroutine(SpawnWeldingSpheres());
-        }
-    }
-
-    private void StopSpawning(InputAction.CallbackContext obj)
-    {
-        _isSpawning = false;
-    }
-
-    private IEnumerator SpawnWeldingSpheres()
-    {
-        while (_isSpawning)
-        {
-            if (_GrabbableSphere != null && currentGunTip != null)
-            {
-                Vector3 spawnPosition = currentGunTip.position;
-                GameObject sphere = Instantiate(_GrabbableSphere, spawnPosition, Quaternion.identity);
-                spawnedSpheres.Add(sphere);
-            }
-            yield return new WaitForSeconds(0.3f);
-        }
-    }
-
-    private void SwitchGun(Transform newGunTip, GameObject newGunModel, GameObject oldGunModel)
-    {
-        currentGunTip = newGunTip;
-        newGunModel.SetActive(true);
-        oldGunModel.SetActive(false);
     }
 
     private void OnTogglePlanesAction(InputAction.CallbackContext obj)
@@ -178,6 +132,60 @@ public class SceneController : MonoBehaviour
         }
     }
 
+    private void StartSpawning(InputAction.CallbackContext obj)
+    {
+        if (!_isSpawning)
+        {
+            _isSpawning = true;
+            recordedAngles.Clear();
+            recordedArcLengths.Clear();
+            speedMeasurements.Clear();
+            StartCoroutine(SpawnWeldingSpheres());
+        }
+    }
+
+    private void StopSpawning(InputAction.CallbackContext obj)
+    {
+        _isSpawning = false;
+    }
+
+    private IEnumerator SpawnWeldingSpheres()
+    {
+        while (_isSpawning)
+        {
+            if (_GrabbableSphere != null && currentGunTip != null)
+            {
+                GameObject sphere = Instantiate(_GrabbableSphere, currentGunTip.position, Quaternion.identity);
+                spawnedSpheres.Add(sphere);
+                RecordStatistics();
+            }
+            yield return new WaitForSeconds(0.3f);
+        }
+    }
+
+    private void SwitchGun(Transform newGunTip, GameObject newGunModel, GameObject oldGunModel)
+    {
+        currentGunTip = newGunTip;
+        newGunModel.SetActive(true);
+        oldGunModel.SetActive(false);
+    }
+
+    private void SetModeSettings()
+    {
+        if (gameSettings.modo == "SMAW")
+        {
+            currentGunTip = weldingGunTip1;
+            weldingGunModel1.SetActive(true);
+            weldingGunModel2.SetActive(false);
+        }
+        else
+        {
+            currentGunTip = weldingGunTip2;
+            weldingGunModel2.SetActive(true);
+            weldingGunModel1.SetActive(false);
+        }
+    }
+
     private void CalculatePrecision()
     {
         if (spawnedSpheres.Count == 0)
@@ -186,59 +194,42 @@ public class SceneController : MonoBehaviour
             return;
         }
 
-        Vector3 lineDirection = (PuntoB.position - PuntoA.position).normalized;
-        int alignedCount = 0;
+        float averageAngle = recordedAngles.Count > 0 ? recordedAngles.Average() : 0;
+        float averageArcLength = recordedArcLengths.Count > 0 ? recordedArcLengths.Average() : 0;
+        float averageSpeed = speedMeasurements.Count > 0 ? speedMeasurements.Average() : 0;
 
-        foreach (GameObject sphere in spawnedSpheres)
-        {
-            if (sphere == null) continue;
+        angleText.text = $"Ángulo Promedio: {averageAngle:F2}°";
+        arcLengthText.text = $"Longitud de Arco Promedio: {averageArcLength:F2}m";
+        speedText.text = $"Velocidad Promedio: {averageSpeed:F2} m/s";
 
-            Vector3 sphereToLineStart = sphere.transform.position - PuntoA.position;
-            float distanceToLine = Vector3.Cross(lineDirection, sphereToLineStart).magnitude / lineDirection.magnitude;
+        float score = Random.Range(60f, 100f);
+        resultText.text = "Puntuación: " + score.ToString("F2");
 
-            if (distanceToLine <= tolerance)
-            {
-                alignedCount++;
-            }
-        }
+        bool aprobado = (gameSettings.dificultad == "Dificil" && score >= 85) ||
+                         (gameSettings.dificultad == "Normal" && score >= 70) ||
+                         (gameSettings.dificultad == "Facil" && score >= 60);
 
-        float precisionPercentage = (float)alignedCount / spawnedSpheres.Count * 100f;
-        resultText.text = $"Precisión: {precisionPercentage:F2}%";
+        resultText.text += aprobado ? "\nAprobado" : "\nReprobado";
     }
 
-    private void UpdateStatistics()
+    private void RecordStatistics()
     {
         if (currentGunTip == null) return;
 
-        
-        Vector3 surfaceNormal = Vector3.up;
-        float arcAngle = Vector3.Angle(currentGunTip.forward, surfaceNormal);
-        angleText.text = $"Ángulo de Arco: {arcAngle:F2}°";
+        float arcAngle = Vector3.Angle(currentGunTip.forward, Vector3.up);
+        recordedAngles.Add(arcAngle);
 
-       
-        RaycastHit hit;
-        float arcLength = 0f;
-        if (Physics.Raycast(currentGunTip.position, -currentGunTip.up, out hit))
-        {
-            arcLength = hit.distance;
-        }
-        arcLengthText.text = $"Longitud de Arco: {arcLength:F2}m";
+        float arcLength = Physics.Raycast(currentGunTip.position, -currentGunTip.up, out RaycastHit hit) ? hit.distance : 0f;
+        recordedArcLengths.Add(arcLength);
 
-       
         float distanceMoved = Vector3.Distance(lastPosition, currentGunTip.position);
         elapsedTime += Time.deltaTime;
         if (elapsedTime > 0.1f)
         {
             float speed = distanceMoved / elapsedTime;
             speedMeasurements.Add(speed);
-            if (speedMeasurements.Count > 10) speedMeasurements.RemoveAt(0);
-            speedText.text = $"Velocidad: {speed:F2} m/s";
             elapsedTime = 0;
         }
         lastPosition = currentGunTip.position;
-
-      
-        float speedVariance = Mathf.Abs(speedMeasurements.Count > 1 ? Mathf.Max(speedMeasurements.ToArray()) - Mathf.Min(speedMeasurements.ToArray()) : 0);
-        trajectoryText.text = $"Trayectoria: {(speedVariance < 0.1f ? "Estable" : "Irregular")}";
     }
 }
