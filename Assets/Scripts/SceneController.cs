@@ -44,6 +44,8 @@ public class SceneController : MonoBehaviour
     [SerializeField]
     private Button calculateButton;
     [SerializeField]
+    private TMP_Text Presiciontext;
+    [SerializeField]
     private TMP_Text resultText;
     [SerializeField]
     private TMP_Text angleText;
@@ -194,6 +196,7 @@ public class SceneController : MonoBehaviour
             return;
         }
 
+        // Obtener promedios
         float averageAngle = recordedAngles.Count > 0 ? recordedAngles.Average() : 0;
         float averageArcLength = recordedArcLengths.Count > 0 ? recordedArcLengths.Average() : 0;
         float averageSpeed = speedMeasurements.Count > 0 ? speedMeasurements.Average() : 0;
@@ -202,14 +205,62 @@ public class SceneController : MonoBehaviour
         arcLengthText.text = $"Longitud de Arco Promedio: {averageArcLength:F2}m";
         speedText.text = $"Velocidad Promedio: {averageSpeed:F2} m/s";
 
-        float score = Random.Range(60f, 100f);
-        resultText.text = "Puntuación: " + score.ToString("F2");
+        // Evaluación de precisión en línea
+        Vector3 lineDirection = (PuntoB.position - PuntoA.position).normalized;
+        float totalSpheres = spawnedSpheres.Count;
+        int inLineSpheres = 0;
 
-        bool aprobado = (gameSettings.dificultad == "Dificil" && score >= 85) ||
-                         (gameSettings.dificultad == "Normal" && score >= 70) ||
-                         (gameSettings.dificultad == "Facil" && score >= 60);
+        foreach (var sphere in spawnedSpheres)
+        {
+            if (sphere == null) continue;
 
+            Vector3 sphereDirection = sphere.transform.position - PuntoA.position;
+            float perpendicularDistance = Vector3.Cross(lineDirection, sphereDirection).magnitude / lineDirection.magnitude;
+
+            if (perpendicularDistance <= tolerance)
+            {
+                inLineSpheres++;
+            }
+        }
+
+        float precision = (float)inLineSpheres / totalSpheres * 100f;
+        Presiciontext.text = $"Precisión: {precision:F2}%";
+
+        // **Calculo de la puntuación basada en distancia al rango ideal**
+        float scoreAngle = CalculateScore(averageAngle, 80, 90);
+        float scoreArcAngle = CalculateScore(averageArcLength, 10, 20);
+        float scoreArcLength = CalculateScore(averageArcLength, 1.5f, 3f);
+        float scoreSpeed = CalculateScore(averageSpeed, 3f, 6f);
+
+        // Precisión también contribuye a la puntuación total (20 puntos si está perfecta)
+        float scorePrecision = (precision / 100f) * 20f;
+
+        // **Puntuación total sobre 100**
+        float totalScore = scoreAngle + scoreArcAngle + scoreArcLength + scoreSpeed + scorePrecision;
+
+        // Determinar si aprueba según la dificultad
+        bool aprobado = (gameSettings.dificultad == "Dificil" && totalScore >= 90) ||
+                        (gameSettings.dificultad == "Normal" && totalScore >= 80) ||
+                        (gameSettings.dificultad == "Facil" && totalScore >= 70);
+
+        resultText.text = $"Puntuación: {totalScore:F2}/100";
         resultText.text += aprobado ? "\nAprobado" : "\nReprobado";
+    }
+
+    // Método para calcular la puntuación basada en qué tan cerca está del rango ideal
+    private float CalculateScore(float value, float min, float max)
+    {
+        if (value >= min && value <= max)
+        {
+            return 20f; // Dentro del rango ideal, puntaje perfecto
+        }
+        else
+        {
+            // Penalización proporcional (si está fuera del rango)
+            float distance = Mathf.Min(Mathf.Abs(value - min), Mathf.Abs(value - max));
+            float maxPenalty = 20f; // Si está muy lejos, puede perder hasta los 20 puntos
+            return Mathf.Max(0, 20f - (distance * maxPenalty / (max - min)));
+        }
     }
 
     private void RecordStatistics()
