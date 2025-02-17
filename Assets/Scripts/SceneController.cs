@@ -57,8 +57,7 @@ public class SceneController : MonoBehaviour
     private TMP_Text trajectoryText;
 
     [Header("Configuración del juego")]
-    [SerializeField]
-    private GameSettings gameSettings;
+    [SerializeField] private GameSettings gameSettings;
 
     private ARPlaneManager _planeManager;
     private bool _isVisible = true;

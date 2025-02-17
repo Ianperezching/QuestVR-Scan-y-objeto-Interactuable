@@ -1168,7 +1168,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1114855979}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PrecisionCalculator, Assembly-CSharp
         m_MethodName: CalcularPrecision
         m_Mode: 1
@@ -3888,7 +3888,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1114855978}
-  - component: {fileID: 1114855979}
   - component: {fileID: 1114855980}
   m_Layer: 0
   m_Name: GameManager
@@ -3912,22 +3911,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1114855979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114855977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e580ab61eceafd440957be83152761b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PuntoA: {fileID: 1122384151}
-  PuntoB: {fileID: 1523781759}
-  ResultadoTexto: {fileID: 1647782852}
-  Tolerancia: 0.0001
 --- !u!114 &1114855980
 MonoBehaviour:
   m_ObjectHideFlags: 0
