@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class PrecisionCalculator : MonoBehaviour
+public class PrecisionCalculators : MonoBehaviour
 {
     [Header("Referencias")]
     public Transform PuntoA;        // Punto inicial de la línea guía

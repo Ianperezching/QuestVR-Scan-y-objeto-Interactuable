@@ -14,7 +14,10 @@ public class SceneControllers : MonoBehaviour
     {
         _planeController = GetComponent<ARPlaneVisibilityController>();
         _gunController = GetComponent<WeldingGunController>();
-        // Inicializar otros componentes...
-        _uiManager.SetupUI(_precisionCalculator, _gunController, _sphereSpawner);
+        _precisionCalculator = GetComponent<PrecisionCalculator>();
+        _uiManager = GetComponent<UIManager>();
+        _sphereSpawner = GetComponent<SphereSpawner>();
+
+        _uiManager.Initialize(_gunController, _precisionCalculator, _sphereSpawner);
     }
 }

@@ -1,27 +1,27 @@
 using UnityEngine;
-using UnityEngine.XR.ARFoundation;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.ARFoundation;
 
 [RequireComponent(typeof(ARPlaneManager))]
 public class ARPlaneVisibilityController : MonoBehaviour
 {
-    [SerializeField] private InputActionReference _togglePlanesAccion;
-    private ARPlaneManager _planeManager;
-    private bool _isVisible = true;
+    [SerializeField] private InputActionReference togglePlanesAction;
+    private ARPlaneManager planeManager;
+    private bool isVisible = true;
 
     void Start()
-    { 
-       _planeManager = GetComponent<ARPlaneManager>();
-        _togglePlanesAccion.action.performed += OnTogglePlanesAction;
+    {
+        planeManager = GetComponent<ARPlaneManager>();
+        togglePlanesAction.action.performed += OnTogglePlanesAction;
     }
 
-    private void OnTogglePlanesAction(InputAction.CallbackContext obj)
+    private void OnTogglePlanesAction(InputAction.CallbackContext context)
     {
-        _isVisible = !_isVisible;
-        float fillAlpha = _isVisible ? 0.3f : 0f;
-        float lineAlpha = _isVisible ? 1f : 0f;
+        isVisible = !isVisible;
+        float fillAlpha = isVisible ? 0.3f : 0f;
+        float lineAlpha = isVisible ? 1f : 0f;
 
-        foreach (var plane in _planeManager.trackables)
+        foreach (var plane in planeManager.trackables)
         {
             SetPlaneAlpha(plane, fillAlpha, lineAlpha);
         }
@@ -50,5 +50,10 @@ public class ARPlaneVisibilityController : MonoBehaviour
             lineRenderer.startColor = startColor;
             lineRenderer.endColor = endColor;
         }
+    }
+
+    void OnDestroy()
+    {
+        togglePlanesAction.action.performed -= OnTogglePlanesAction;
     }
 }

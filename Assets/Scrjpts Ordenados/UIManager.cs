@@ -1,30 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Botones")]
+    [Header("Buttons")]
     [SerializeField] private Button calculateButton;
     [SerializeField] private Button gun1Button;
     [SerializeField] private Button gun2Button;
 
-    [Header("Textos")]
-    [SerializeField] private TMP_Text angleText;
-    [SerializeField] private TMP_Text arcLengthText;
-    // ... otros textos ...
+    [Header("Text Displays")]
+    [SerializeField] private TMP_Text modeDisplay;
+    [SerializeField] private TMP_Text difficultyDisplay;
 
-    public void SetupUI(
-        PrecisionCalculator precisionCalculator,
+    [Header("Dependencies")]
+    [SerializeField] private WeldingStatsRecorder statsRecorder;
+    [SerializeField] private SphereSpawner spawner;
+
+    public void Initialize(
         WeldingGunController gunController,
-        SphereSpawner spawner
+        PrecisionCalculator precisionCalculator,
+        SphereSpawner sphereSpawner
     )
     {
+        spawner = sphereSpawner;
+
         calculateButton.onClick.AddListener(() =>
-            precisionCalculator.CalculatePrecision
+            precisionCalculator.CalculatePrecision(
+                spawner.SpawnedSpheres,
+                statsRecorder.RecordedAngles,
+                statsRecorder.RecordedArcLengths,
+                statsRecorder.SpeedMeasurements
+            )
         );
-        // Configurar otros botones y eventos
+
+        gun1Button.onClick.AddListener(() => gunController.SwitchGun(true));
+        gun2Button.onClick.AddListener(() => gunController.SwitchGun(false));
+
     }
 }

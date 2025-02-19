@@ -1,39 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class SphereSpawner : MonoBehaviour
 {
-    [SerializeField] private InputActionReference _activateAction;
-    [SerializeField] private GameObject _GrabbableSphere;
-    [SerializeField] private Transform currentGunTip;
+    [Header("Spawn Settings")]
+    [SerializeField] private InputActionReference activateAction;
+    [SerializeField] private GameObject grabbableSphere;
+    [SerializeField] private float spawnInterval = 0.3f;
 
-    private bool _isSpawning = false;
+    private bool isSpawning = false;
     private List<GameObject> spawnedSpheres = new List<GameObject>();
+    private Coroutine spawningCoroutine;
+    private WeldingStatsRecorder statsRecorder;
+
+    public List<GameObject> SpawnedSpheres => spawnedSpheres;
 
     void Start()
     {
-        _activateAction.action.performed += StartSpawning;
-        _activateAction.action.canceled += StopSpawning;
+        statsRecorder = GetComponent<WeldingStatsRecorder>();
+        activateAction.action.performed += StartSpawning;
+        activateAction.action.canceled += StopSpawning;
     }
 
-    private void StartSpawning(InputAction.CallbackContext obj) => StartCoroutine(SpawnWeldingSpheres());
-    private void StopSpawning(InputAction.CallbackContext obj) => _isSpawning = false;
-
-    private IEnumerator SpawnWeldingSpheres()
+    private IEnumerator SpawnSpheres()
     {
-        while (_isSpawning)
+        while (isSpawning)
         {
-            if (_GrabbableSphere != null && currentGunTip != null)
-            {
-                GameObject sphere = Instantiate(_GrabbableSphere, currentGunTip.position, Quaternion.identity);
-                spawnedSpheres.Add(sphere);
-                RecordStatistics();
-            }
-            yield return new WaitForSeconds(0.3f);
+            GameObject sphere = Instantiate(grabbableSphere, transform.position, Quaternion.identity);
+            spawnedSpheres.Add(sphere);
+
+            float angle = Vector3.Angle(transform.forward, Vector3.up);
+            float arcLength = Physics.Raycast(transform.position, -transform.up, out RaycastHit hit) ? hit.distance : 0f;
+            float speed = CalculateSpeed();
+
+            statsRecorder.RecordStats(angle, arcLength, speed);
+            yield return new WaitForSeconds(spawnInterval);
         }
     }
 
+    private float CalculateSpeed()
+    {
+        return spawnedSpheres.Count > 1 ?
+            Vector3.Distance(
+                spawnedSpheres[^1].transform.position,
+                spawnedSpheres[^2].transform.position
+            ) / spawnInterval : 0;
+    }
+
+    private void StartSpawning(InputAction.CallbackContext context) => StartCoroutine(SpawnSpheres());
+    private void StopSpawning(InputAction.CallbackContext context) => isSpawning = false;
+
+    void OnDestroy()
+    {
+        activateAction.action.performed -= StartSpawning;
+        activateAction.action.canceled -= StopSpawning;
+    }
 }
