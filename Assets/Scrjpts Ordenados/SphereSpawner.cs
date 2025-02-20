@@ -22,6 +22,7 @@ public class SphereSpawner : MonoBehaviour
 
     [Header("Work Area Restriction")]
     [SerializeField] private WorkAreaChecker workAreaChecker;
+
     void Start()
     {
         statsRecorder = GetComponent<WeldingStatsRecorder>();
@@ -43,6 +44,7 @@ public class SphereSpawner : MonoBehaviour
 
         while (isSpawning)
         {
+           
             // Instanciar esfera en la punta activa de la pistola
             Transform currentTip = gunController.CurrentGunTip;
             GameObject sphere = Instantiate(
