@@ -9,7 +9,10 @@ public class WeldingGunController : MonoBehaviour
     [SerializeField] private GameObject weldingGunModel2;
     [SerializeField] private GameSettings gameSettings;
 
+    
     public Transform CurrentGunTip { get; private set; }
+    public Transform GunTip1 => weldingGunTip1; 
+    public Transform GunTip2 => weldingGunTip2; 
 
     void Start() => SetInitialGun();
 

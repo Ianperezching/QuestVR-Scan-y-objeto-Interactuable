@@ -1871,7 +1871,6 @@ GameObject:
   - component: {fileID: 433350870}
   - component: {fileID: 433350873}
   - component: {fileID: 433350872}
-  - component: {fileID: 433350871}
   m_Layer: 0
   m_Name: cubo punto A
   m_TagString: Untagged
@@ -1889,32 +1888,11 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.0029999912}
-  m_LocalScale: {x: -0.028850507, y: -0.35466993, z: -0.02886091}
+  m_LocalScale: {x: 0.02885051, y: 0.3546699, z: 0.02886091}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1122384151}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &433350871
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433350869}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &433350872
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2251,8 +2229,6 @@ GameObject:
   - component: {fileID: 566792628}
   - component: {fileID: 566792631}
   - component: {fileID: 566792634}
-  - component: {fileID: 566792632}
-  - component: {fileID: 566792633}
   m_Layer: 0
   m_Name: XR Origin (XR Rig)
   m_TagString: Untagged
@@ -2322,40 +2298,6 @@ MonoBehaviour:
   m_PlanePrefab: {fileID: 5006205699711845098, guid: d99b4291585ec6049aab76b489a953a7,
     type: 3}
   m_DetectionMode: -1
---- !u!114 &566792632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566792627}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6ea24d974818af45968d7f88e28924b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activateAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
-    type: 3}
-  grabbableSphere: {fileID: 4685026924482430454, guid: 9b1cdadc9d86d664687e0daae0215b71,
-    type: 3}
-  spawnInterval: 0.3
---- !u!114 &566792633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566792627}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90aa49267c3d2284aa88b80b5301e97c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weldingGunTip1: {fileID: 1817680393}
-  weldingGunTip2: {fileID: 2127962661}
-  weldingGunModel1: {fileID: 730769970}
-  weldingGunModel2: {fileID: 487324546}
-  gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!114 &566792634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2605,7 +2547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ad34abafad169848a38072baa96cdb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InteractionManager: {fileID: 0}
+  m_InteractionManager: {fileID: 1975159614}
   m_Colliders: []
   m_InteractionLayerMask:
     serializedVersion: 2
@@ -2768,7 +2710,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -3133,7 +3075,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 43184dfcbe4910447b8a6285d99b2816,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1458962861944389463, guid: 43184dfcbe4910447b8a6285d99b2816,
         type: 3}
@@ -4167,6 +4109,8 @@ GameObject:
   - component: {fileID: 1114855983}
   - component: {fileID: 1114855982}
   - component: {fileID: 1114855981}
+  - component: {fileID: 1114855986}
+  - component: {fileID: 1114855987}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4183,7 +4127,7 @@ Transform:
   m_GameObject: {fileID: 1114855977}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.11940965, y: 1.1664765, z: 0.009929463}
+  m_LocalPosition: {x: -0.11940965, y: 1.1664765, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4213,9 +4157,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e6d52d519886e4d918b2b65ff1afd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RecordedAngles: []
-  RecordedArcLengths: []
-  SpeedMeasurements: []
+  RecordedAngles:
+  - 1
+  - 1
+  - 1
+  RecordedArcLengths:
+  - 0
+  - 0
+  - 0
+  SpeedMeasurements:
+  - 0
+  - 0
+  - 0
 --- !u!114 &1114855982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4234,7 +4187,7 @@ MonoBehaviour:
   modeDisplay: {fileID: 187274356}
   difficultyDisplay: {fileID: 160648502}
   statsRecorder: {fileID: 1114855981}
-  spawner: {fileID: 566792632}
+  spawner: {fileID: 1114855986}
 --- !u!114 &1114855983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4248,8 +4201,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeController: {fileID: 566792634}
-  gunController: {fileID: 566792633}
-  sphereSpawner: {fileID: 566792632}
+  gunController: {fileID: 1114855987}
+  sphereSpawner: {fileID: 1114855986}
   precisionCalculator: {fileID: 1114855985}
   uiManager: {fileID: 1114855982}
 --- !u!114 &1114855984
@@ -4285,6 +4238,41 @@ MonoBehaviour:
   angleText: {fileID: 1685833555}
   arcLengthText: {fileID: 856615115}
   speedText: {fileID: 72580393}
+--- !u!114 &1114855986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114855977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6ea24d974818af45968d7f88e28924b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activateAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  grabbableSphere: {fileID: 4685026924482430454, guid: 9b1cdadc9d86d664687e0daae0215b71,
+    type: 3}
+  spawnInterval: 0.3
+  gunController: {fileID: 1114855987}
+--- !u!114 &1114855987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114855977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90aa49267c3d2284aa88b80b5301e97c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weldingGunTip1: {fileID: 1817680393}
+  weldingGunTip2: {fileID: 2127962661}
+  weldingGunModel1: {fileID: 730769970}
+  weldingGunModel2: {fileID: 487324546}
+  gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!1 &1118615114
 GameObject:
   m_ObjectHideFlags: 0
@@ -4594,7 +4582,6 @@ GameObject:
   - component: {fileID: 1214722327}
   - component: {fileID: 1214722330}
   - component: {fileID: 1214722329}
-  - component: {fileID: 1214722328}
   m_Layer: 0
   m_Name: cubo punto B
   m_TagString: Untagged
@@ -4612,32 +4599,11 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -0.028856818, y: -0.3547946, z: -0.028856818}
+  m_LocalScale: {x: 0.02885682, y: 0.3547946, z: 0.02885682}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1523781759}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1214722328
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1214722326}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1214722329
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4852,7 +4818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ad34abafad169848a38072baa96cdb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InteractionManager: {fileID: 0}
+  m_InteractionManager: {fileID: 1975159614}
   m_Colliders: []
   m_InteractionLayerMask:
     serializedVersion: 2
@@ -5015,7 +4981,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -5151,7 +5117,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1637615645}
   m_LocalRotation: {x: -0.000000014901163, y: 1.1641534e-10, z: 0.9999768, w: -0.006810653}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 2.4584, y: 2.4584, z: 2.4584}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5160,7 +5126,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180.78}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9, y: -108.8}
+  m_AnchoredPosition: {x: 9, y: -119}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1637615647
@@ -6975,7 +6941,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -21.375, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.39000002, y: 1.178}
+  m_AnchoredPosition: {x: -0.39000002, y: 1.165}
   m_SizeDelta: {x: 1101, y: 519}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2084190971
