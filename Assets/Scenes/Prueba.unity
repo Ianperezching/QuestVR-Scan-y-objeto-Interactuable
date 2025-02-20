@@ -1435,19 +1435,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 326764489}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PrecisionCalculator, Assembly-CSharp
-        m_MethodName: CalcularPrecision
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &326764489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2346,7 +2334,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6ea24d974818af45968d7f88e28924b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activateAction: {fileID: 0}
+  activateAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
   grabbableSphere: {fileID: 4685026924482430454, guid: 9b1cdadc9d86d664687e0daae0215b71,
     type: 3}
   spawnInterval: 0.3
@@ -4288,7 +4277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoA: {fileID: 1122384151}
-  puntoB: {fileID: 1214722327}
+  puntoB: {fileID: 1523781759}
   tolerance: 0.1
   gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
   precisionText: {fileID: 1647782852}
