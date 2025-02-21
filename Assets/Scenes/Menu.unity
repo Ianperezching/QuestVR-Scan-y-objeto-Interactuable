@@ -6682,7 +6682,7 @@ MonoBehaviour:
   creditosPanel: {fileID: 1509555760}
   dificultadPanel: {fileID: 1397614585}
   modoPanel: {fileID: 1614778226}
-  CambiodeScena: Simulador
+  CambiodeScena: Prueba
   gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!1 &1799138010
 GameObject:

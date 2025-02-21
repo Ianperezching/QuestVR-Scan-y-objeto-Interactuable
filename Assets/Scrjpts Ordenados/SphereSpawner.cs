@@ -6,10 +6,13 @@ using UnityEngine.InputSystem;
 public class SphereSpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
-    [SerializeField] private InputActionReference activateAction; // Acción de entrada (ej: gatillo VR)
-    [SerializeField] private GameObject grabbableSphere;          // Prefab de la esfera
-    [SerializeField] private float spawnInterval = 0.3f;          // Intervalo entre spawns
-    [SerializeField] private WeldingGunController gunController;  // Controlador de la pistola
+    [SerializeField] private InputActionReference activateAction;
+    [SerializeField] private GameObject grabbableSphere;
+    [SerializeField] private float spawnInterval = 0.3f;
+    [SerializeField] private WeldingGunController gunController;
+
+    [Header("Work Area Restriction")]
+    [SerializeField] private WorkAreaChecker workAreaChecker;
 
     private bool isSpawning = false;
     private List<GameObject> spawnedSpheres = new List<GameObject>();
@@ -18,20 +21,15 @@ public class SphereSpawner : MonoBehaviour
     private Vector3 lastSpawnPosition;
     private float lastSpawnTime;
 
-    public List<GameObject> SpawnedSpheres => spawnedSpheres;     // Acceso público a las esferas
-
-    [Header("Work Area Restriction")]
-    [SerializeField] private WorkAreaChecker workAreaChecker;
+    public List<GameObject> SpawnedSpheres => spawnedSpheres;
 
     void Start()
     {
         statsRecorder = GetComponent<WeldingStatsRecorder>();
 
-        // Verificar referencias críticas
-        if (gunController == null || activateAction == null || grabbableSphere == null)
+        if (gunController == null || activateAction == null || grabbableSphere == null || workAreaChecker == null)
             Debug.LogError("¡Faltan referencias en el Inspector!");
 
-        // Suscribir eventos de entrada
         activateAction.action.performed += StartSpawning;
         activateAction.action.canceled += StopSpawning;
     }
@@ -44,29 +42,23 @@ public class SphereSpawner : MonoBehaviour
 
         while (isSpawning)
         {
-           
-            // Instanciar esfera en la punta activa de la pistola
-            Transform currentTip = gunController.CurrentGunTip;
-            GameObject sphere = Instantiate(
-                grabbableSphere,
-                currentTip.position,
-                currentTip.rotation
-            );
-            spawnedSpheres.Add(sphere);
+            if (workAreaChecker.IsInWorkArea)
+            {
+                Transform currentTip = gunController.CurrentGunTip;
+                GameObject sphere = Instantiate(grabbableSphere, currentTip.position, currentTip.rotation);
+                spawnedSpheres.Add(sphere);
 
-            // Calcular métricas
-            float angle = Vector3.Angle(currentTip.forward, Vector3.up);
-            float arcLength = Physics.Raycast(currentTip.position, -currentTip.up, out RaycastHit hit)
-                ? hit.distance
-                : 0f;
-            float speed = CalculateSpeed();
+                float angle = Vector3.Angle(currentTip.forward, Vector3.up);
+                float arcLength = Physics.Raycast(currentTip.position, -currentTip.up, out RaycastHit hit)
+                    ? hit.distance
+                    : 0f;
+                float speed = CalculateSpeed();
 
-            statsRecorder.RecordStats(angle, arcLength, speed);
+                statsRecorder.RecordStats(angle, arcLength, speed);
 
-            // Actualizar para el próximo cálculo
-            lastSpawnPosition = currentTip.position;
-            lastSpawnTime = Time.time;
-
+                lastSpawnPosition = currentTip.position;
+                lastSpawnTime = Time.time;
+            }
             yield return new WaitForSeconds(spawnInterval);
         }
     }
@@ -81,14 +73,13 @@ public class SphereSpawner : MonoBehaviour
         );
 
         float timeDiff = Time.time - lastSpawnTime;
-        return timeDiff > 0.001f ? distance / timeDiff : 0; // Evitar división por cero
+        return timeDiff > 0.001f ? distance / timeDiff : 0;
     }
 
     private void StartSpawning(InputAction.CallbackContext context)
     {
         if (!isSpawning)
         {
-            // Detener corrutina anterior si existe
             if (spawningCoroutine != null)
                 StopCoroutine(spawningCoroutine);
 
@@ -100,7 +91,6 @@ public class SphereSpawner : MonoBehaviour
 
     void OnDestroy()
     {
-        // Desuscribir eventos al destruir el objeto
         if (activateAction != null)
         {
             activateAction.action.performed -= StartSpawning;
@@ -108,7 +98,6 @@ public class SphereSpawner : MonoBehaviour
         }
     }
 
-    // Visualizar punto de spawn en el Editor
     void OnDrawGizmos()
     {
         if (gunController != null && gunController.CurrentGunTip != null)

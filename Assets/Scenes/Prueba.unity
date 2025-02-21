@@ -2798,6 +2798,7 @@ Transform:
   m_LocalScale: {x: 0.33344308, y: 0.03112753, z: 0.37212968}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 813065643}
   - {fileID: 1122384151}
   - {fileID: 1523781759}
   m_Father: {fileID: 0}
@@ -3132,6 +3133,72 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 801025435}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &813065640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 813065643}
+  - component: {fileID: 813065642}
+  - component: {fileID: 813065641}
+  m_Layer: 0
+  m_Name: WorkZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &813065641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813065640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddb09fc3000c5040ba3fb539d1f2a32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &813065642
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813065640}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.7782375, y: 0.15564972, z: 0.98039544}
+  m_Center: {x: -0.017040072, y: -0.025979212, z: -0.009802269}
+--- !u!4 &813065643
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813065640}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0.0055954624, w: 0.9999844}
+  m_LocalPosition: {x: 0.001, y: -3, z: 0.02637}
+  m_LocalScale: {x: 1.2713085, y: 13.600372, z: 1.1390139}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 674752228}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &856615113
 GameObject:
   m_ObjectHideFlags: 0
@@ -3629,7 +3696,7 @@ GameObject:
   - component: {fileID: 1042813883}
   m_Layer: 0
   m_Name: Right Controller
-  m_TagString: Untagged
+  m_TagString: WeldingGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4157,18 +4224,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e6d52d519886e4d918b2b65ff1afd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RecordedAngles:
-  - 1
-  - 1
-  - 1
-  RecordedArcLengths:
-  - 0
-  - 0
-  - 0
-  SpeedMeasurements:
-  - 0
-  - 0
-  - 0
+  RecordedAngles: []
+  RecordedArcLengths: []
+  SpeedMeasurements: []
 --- !u!114 &1114855982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4256,6 +4314,7 @@ MonoBehaviour:
     type: 3}
   spawnInterval: 0.3
   gunController: {fileID: 1114855987}
+  workAreaChecker: {fileID: 813065641}
 --- !u!114 &1114855987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5726,7 +5785,7 @@ GameObject:
   - component: {fileID: 1799138017}
   m_Layer: 0
   m_Name: Left Controller
-  m_TagString: Untagged
+  m_TagString: WeldingGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
