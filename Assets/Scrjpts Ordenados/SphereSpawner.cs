@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class SphereSpawner : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class SphereSpawner : MonoBehaviour
     [SerializeField] private float spawnInterval = 0.3f;
     [SerializeField] private WeldingGunController gunController;
 
-    [Header("Work Area Restriction")]
+    [Header("Work Area")]
     [SerializeField] private WorkAreaChecker workAreaChecker;
 
     private bool isSpawning = false;
@@ -44,10 +45,18 @@ public class SphereSpawner : MonoBehaviour
         {
             if (workAreaChecker.IsInWorkArea)
             {
+                // Instanciar esfera en la punta activa
                 Transform currentTip = gunController.CurrentGunTip;
-                GameObject sphere = Instantiate(grabbableSphere, currentTip.position, currentTip.rotation);
+                GameObject sphere = Instantiate(
+                    grabbableSphere,
+                    currentTip.position,
+                    currentTip.rotation
+                );
+
+                sphere.tag = "WeldingSphere"; // Asignar tag para detección
                 spawnedSpheres.Add(sphere);
 
+                // Calcular métricas
                 float angle = Vector3.Angle(currentTip.forward, Vector3.up);
                 float arcLength = Physics.Raycast(currentTip.position, -currentTip.up, out RaycastHit hit)
                     ? hit.distance
@@ -55,11 +64,26 @@ public class SphereSpawner : MonoBehaviour
                 float speed = CalculateSpeed();
 
                 statsRecorder.RecordStats(angle, arcLength, speed);
-
                 lastSpawnPosition = currentTip.position;
                 lastSpawnTime = Time.time;
             }
+
+            // Destruir esferas fuera del área
+            CleanupOutOfAreaSpheres();
+
             yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+    private void CleanupOutOfAreaSpheres()
+    {
+        foreach (var sphere in spawnedSpheres.ToList())
+        {
+            if (sphere == null || !workAreaChecker.SpheresInArea.Contains(sphere))
+            {
+                spawnedSpheres.Remove(sphere);
+                if (sphere != null) Destroy(sphere);
+            }
         }
     }
 
