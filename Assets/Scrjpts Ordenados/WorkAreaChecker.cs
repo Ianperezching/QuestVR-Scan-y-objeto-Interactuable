@@ -9,21 +9,31 @@ public class WorkAreaChecker : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("WeldingGun"))
+        {
             IsInWorkArea = true;
+            Debug.Log("[WorkArea] Pistola DENTRO del área");
+        }
 
         if (other.CompareTag("WeldingSphere"))
+        {
             SpheresInArea.Add(other.gameObject);
+            Debug.Log($"[WorkArea] Esfera {other.name} AGREGADA. Total: {SpheresInArea.Count}");
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("WeldingGun"))
+        {
             IsInWorkArea = false;
+            Debug.Log("[WorkArea] Pistola FUERA del área");
+        }
 
         if (other.CompareTag("WeldingSphere"))
         {
             SpheresInArea.Remove(other.gameObject);
-            Destroy(other.gameObject); // Destruir al salir del área
+            Debug.Log($"[WorkArea] Esfera {other.name} REMOVIDA. Restantes: {SpheresInArea.Count}");
+            Destroy(other.gameObject);
         }
     }
 }

@@ -45,18 +45,22 @@ public class SphereSpawner : MonoBehaviour
         {
             if (workAreaChecker.IsInWorkArea)
             {
-                // Instanciar esfera en la punta activa
                 Transform currentTip = gunController.CurrentGunTip;
+
+                
                 GameObject sphere = Instantiate(
                     grabbableSphere,
                     currentTip.position,
                     currentTip.rotation
                 );
-
-                sphere.tag = "WeldingSphere"; // Asignar tag para detección
+                sphere.tag = "WeldingSphere";
                 spawnedSpheres.Add(sphere);
 
-                // Calcular métricas
+              
+                Physics.SyncTransforms();
+                Debug.Log($"[Spawner] Esfera creada: {sphere.name}");
+
+               
                 float angle = Vector3.Angle(currentTip.forward, Vector3.up);
                 float arcLength = Physics.Raycast(currentTip.position, -currentTip.up, out RaycastHit hit)
                     ? hit.distance
@@ -68,9 +72,9 @@ public class SphereSpawner : MonoBehaviour
                 lastSpawnTime = Time.time;
             }
 
-            // Destruir esferas fuera del área
+           
+            yield return null;
             CleanupOutOfAreaSpheres();
-
             yield return new WaitForSeconds(spawnInterval);
         }
     }
@@ -79,10 +83,17 @@ public class SphereSpawner : MonoBehaviour
     {
         foreach (var sphere in spawnedSpheres.ToList())
         {
-            if (sphere == null || !workAreaChecker.SpheresInArea.Contains(sphere))
+            if (sphere == null)
             {
                 spawnedSpheres.Remove(sphere);
-                if (sphere != null) Destroy(sphere);
+                continue;
+            }
+
+            if (!workAreaChecker.SpheresInArea.Contains(sphere))
+            {
+                Debug.Log($"[Spawner] Destruyendo esfera fuera del área: {sphere.name}");
+                spawnedSpheres.Remove(sphere);
+                Destroy(sphere);
             }
         }
     }
@@ -119,15 +130,6 @@ public class SphereSpawner : MonoBehaviour
         {
             activateAction.action.performed -= StartSpawning;
             activateAction.action.canceled -= StopSpawning;
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        if (gunController != null && gunController.CurrentGunTip != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(gunController.CurrentGunTip.position, 0.02f);
         }
     }
 }

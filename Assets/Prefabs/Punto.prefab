@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2725409277073051273}
   m_Layer: 0
   m_Name: Punto
-  m_TagString: Untagged
+  m_TagString: WeldingSphere
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

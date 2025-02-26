@@ -3078,6 +3078,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 43184dfcbe4910447b8a6285d99b2816,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 1458962861944389463, guid: 43184dfcbe4910447b8a6285d99b2816,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3193,8 +3198,8 @@ Transform:
   m_GameObject: {fileID: 813065640}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.0055954624, w: 0.9999844}
-  m_LocalPosition: {x: 0.001, y: -3, z: 0.02637}
-  m_LocalScale: {x: 1.2713085, y: 13.600372, z: 1.1390139}
+  m_LocalPosition: {x: 0.007, y: 0.59, z: 0.026979}
+  m_LocalScale: {x: 1.340666, y: 14.342355, z: 1.201154}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 674752228}
@@ -3992,8 +3997,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.05
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.03
+  m_Center: {x: -0.01, y: 0.09, z: 0.03}
 --- !u!114 &1042813884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4312,7 +4317,7 @@ MonoBehaviour:
     type: 3}
   grabbableSphere: {fileID: 4685026924482430454, guid: 9b1cdadc9d86d664687e0daae0215b71,
     type: 3}
-  spawnInterval: 0.3
+  spawnInterval: 0.2
   gunController: {fileID: 1114855987}
   workAreaChecker: {fileID: 813065641}
 --- !u!114 &1114855987
@@ -4827,6 +4832,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 417064897e4dfc14ab71a5a9b00e757c,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7000,7 +7010,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -21.375, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.39000002, y: 1.165}
+  m_AnchoredPosition: {x: -0.39000002, y: 1.498}
   m_SizeDelta: {x: 1101, y: 519}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2084190971
