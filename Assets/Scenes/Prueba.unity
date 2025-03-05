@@ -4029,8 +4029,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.03
-  m_Center: {x: -0.01, y: 0.09, z: 0.03}
+  m_Radius: 0.022005226
+  m_Center: {x: -0.009999995, y: 0.09, z: 0.05}
 --- !u!114 &1042813884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4382,11 +4382,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2608890e37189e844baf4a65898b9b49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sparkEffect: {fileID: 8299031009411287093, guid: af992645347f7124c860a584223462b4,
+  sparkEffect: {fileID: 8299031009411287093, guid: dee4c6f0efe0f6a4cbefb54ec5abbffc,
     type: 3}
-  fireEffect: {fileID: 4732604859929389183, guid: 922b4152776a3794c8b43243f834181e,
+  fireEffect: {fileID: 2400653405192090566, guid: bfb3730a1341ee94c809e17ce13ce9ea,
     type: 3}
   spawnPoint: {fileID: 1817680393}
+  rayDistance: 1
+  triggerAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
 --- !u!1 &1118615114
 GameObject:
   m_ObjectHideFlags: 0
@@ -6521,13 +6524,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1817680392}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013603149, y: 0.70697594, z: 0.013603149, w: 0.70697594}
-  m_LocalPosition: {x: -0.00002, y: 0.01883, z: 0.00317}
+  m_LocalRotation: {x: -0.38986668, y: -0, z: -0, w: 0.9208713}
+  m_LocalPosition: {x: -0.00002, y: 0.01877, z: 0.00311}
   m_LocalScale: {x: 0.008348784, y: 0.008348786, z: 0.008348787}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1655674108}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -45.892, y: 0, z: 0}
 --- !u!1 &1869407080
 GameObject:
   m_ObjectHideFlags: 0

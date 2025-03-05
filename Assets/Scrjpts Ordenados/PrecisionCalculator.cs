@@ -52,7 +52,7 @@ public class PrecisionCalculator : MonoBehaviour
         // Calcular puntuación
         float angleScore = CalculateScore(angles, 80, 90);
         float arcScore = CalculateScore(arcLengths, 1.5f, 3f);
-        float speedScore = CalculateScore(speeds, 3f, 6f);
+        float speedScore = CalculateScore(speeds, 0.4f, 1f);
         float totalScore = angleScore + arcScore + speedScore + (precision / 5f);
 
         // Evaluar aprobación

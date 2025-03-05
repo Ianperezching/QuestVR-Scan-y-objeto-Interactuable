@@ -1,109 +1,133 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.InputSystem;
 
 public class WeldingGunOnActivate : MonoBehaviour
 {
-    public ParticleSystem sparkEffect; // Efecto de partículas para las chispas
-    public ParticleSystem fireEffect; // Efecto de partículas para el fuego
-    public Transform spawnPoint; // Punto de origen de las chispas y el fuego
+    [Header("Efectos de Partículas")]
+    public ParticleSystem sparkEffect;  // Chispas para soldadura
+    public ParticleSystem fireEffect;   // Fuego base constante
 
-    private ParticleSystem currentFire; // Referencia al efecto de fuego actual
-    private ParticleSystem currentSparks; // Referencia al efecto de chispas actual
-    private bool isTriggerPressed = false; // Estado del gatillo
+    [Header("Configuración")]
+    public Transform spawnPoint;        // Punto de origen de efectos
+    [SerializeField] private float rayDistance = 1.0f; // Distancia de detección
+
+    [Header("Controles")]
+    [SerializeField] private InputActionReference triggerAction; // Acción del gatillo
+
+    private ParticleSystem currentFire;   // Referencia al fuego activo
+    private ParticleSystem currentSparks; // Referencia a chispas activas
+    private bool isTriggerActive = false; // Estado del gatillo
 
     void Start()
     {
-        // Obtén el componente XRGrabInteractable y añade listeners para los eventos de activación y desactivación
-        XRGrabInteractable grabbable = GetComponent<XRGrabInteractable>();
-        grabbable.activated.AddListener(StartWelding);
-        grabbable.deactivated.AddListener(StopWelding);
+        // Configurar eventos de entrada
+        triggerAction.action.performed += _ => StartWelding();
+        triggerAction.action.canceled += _ => StopWelding();
     }
 
     void Update()
     {
-        // Si el gatillo está presionado y el fuego está activo, mueve el fuego y verifica si está cerca de un objeto de metal
-        if (isTriggerPressed && currentFire != null)
+        if (isTriggerActive)
         {
-            // Mueve el fuego junto con la pistola
-            currentFire.transform.position = spawnPoint.position;
-            currentFire.transform.rotation = spawnPoint.rotation;
-
-            // Verifica si el fuego está cerca de un objeto de metal
-            CheckForMetal();
+            UpdateFirePosition();
+            CheckForJoinable();
         }
     }
 
-    public void StartWelding(ActivateEventArgs arg)
+    void OnDestroy()
     {
-        // Activa el efecto de fuego
-        isTriggerPressed = true;
-        currentFire = Instantiate(fireEffect, spawnPoint.position, spawnPoint.rotation);
-        currentFire.Play(); // Reproduce el efecto de fuego
-
-        // Verifica si el fuego está cerca de un objeto de metal
-        CheckForMetal();
+        // Limpiar eventos de entrada
+        triggerAction.action.performed -= _ => StartWelding();
+        triggerAction.action.canceled -= _ => StopWelding();
     }
 
-    public void StopWelding(DeactivateEventArgs arg)
+    // ========== LÓGICA PRINCIPAL ========== //
+    private void StartWelding()
     {
-        // Detiene el efecto de fuego y las chispas
-        isTriggerPressed = false;
+        isTriggerActive = true;
 
+        // Activar fuego constante
+        if (currentFire == null)
+        {
+            currentFire = Instantiate(fireEffect, spawnPoint);
+            currentFire.Play();
+        }
+    }
+
+    private void StopWelding()
+    {
+        isTriggerActive = false;
+
+        // Detener efectos
         if (currentFire != null)
         {
-            currentFire.Stop(); // Detiene el fuego
-            Destroy(currentFire.gameObject, currentFire.main.duration); // Destruye el fuego después de que termine
+            currentFire.Stop();
+            Destroy(currentFire.gameObject, 2f);
         }
+        DestroySparks();
+    }
 
-        if (currentSparks != null)
+    // ========== FUNCIONES AUXILIARES ========== //
+    private void UpdateFirePosition()
+    {
+        // Mantener el fuego en la punta de la pistola
+        if (currentFire != null)
         {
-            currentSparks.Stop(); // Detiene las chispas
-            Destroy(currentSparks.gameObject, currentSparks.main.duration); // Destruye las chispas después de que terminen
+            currentFire.transform.position = spawnPoint.position;
+            currentFire.transform.rotation = spawnPoint.rotation;
         }
     }
 
-    private void CheckForMetal()
+    private void CheckForJoinable()
     {
-        // Lanza un rayo desde el spawnPoint para detectar objetos de metal
         RaycastHit hit;
-        if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hit, 1.0f)) // Ajusta la distancia del rayo según sea necesario
+        bool hitJoinable = Physics.Raycast(
+            spawnPoint.position,
+            spawnPoint.forward,
+            out hit,
+            rayDistance
+        ) && hit.collider.CompareTag("Joinable");
+
+        ManageSparks(hitJoinable, hit.point);
+    }
+
+    private void ManageSparks(bool shouldSpawn, Vector3 position)
+    {
+        if (shouldSpawn)
         {
-            if (hit.collider.CompareTag("Metal")) // Verifica si el objeto tiene el tag "Metal"
+            if (currentSparks == null)
             {
-                // Activa las chispas en la posición de colisión
-                if (currentSparks == null)
-                {
-                    currentSparks = Instantiate(sparkEffect, hit.point, Quaternion.identity);
-                    currentSparks.Play(); // Reproduce el efecto de chispas
-                }
-                else
-                {
-                    // Mueve las chispas al nuevo punto de colisión
-                    currentSparks.transform.position = hit.point;
-                }
+                currentSparks = Instantiate(sparkEffect, position, Quaternion.identity);
+                currentSparks.Play();
             }
             else
             {
-                // Si el objeto no es de metal, desactiva las chispas
-                if (currentSparks != null)
-                {
-                    currentSparks.Stop(); // Detiene las chispas
-                    Destroy(currentSparks.gameObject, currentSparks.main.duration); // Destruye las chispas después de que terminen
-                    currentSparks = null;
-                }
+                currentSparks.transform.position = position;
             }
         }
         else
         {
-            // Si no hay colisión, desactiva las chispas
-            if (currentSparks != null)
-            {
-                currentSparks.Stop(); // Detiene las chispas
-                Destroy(currentSparks.gameObject, currentSparks.main.duration); // Destruye las chispas después de que terminen
-                currentSparks = null;
-            }
+            DestroySparks();
+        }
+    }
+
+    private void DestroySparks()
+    {
+        if (currentSparks != null)
+        {
+            currentSparks.Stop();
+            Destroy(currentSparks.gameObject, currentSparks.main.duration);
+            currentSparks = null;
+        }
+    }
+
+    // ========== DEBUG ========== //
+    void OnDrawGizmos()
+    {
+        if (isTriggerActive)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(spawnPoint.position, spawnPoint.forward * rayDistance);
         }
     }
 }
