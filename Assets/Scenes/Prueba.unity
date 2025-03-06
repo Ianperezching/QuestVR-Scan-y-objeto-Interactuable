@@ -2755,7 +2755,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f7d67e35fc34dc5489409dc45111f275, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2794,8 +2794,8 @@ Transform:
   m_GameObject: {fileID: 674752222}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.0055954624, w: 0.9999844}
-  m_LocalPosition: {x: 0.429, y: 1.108, z: 0.41699997}
-  m_LocalScale: {x: 0.33344308, y: 0.03112753, z: 0.37212968}
+  m_LocalPosition: {x: 0.4289, y: 1.0973, z: 0.41699997}
+  m_LocalScale: {x: 0.33344308, y: 0.018542169, z: 0.37212968}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 813065643}
@@ -4386,6 +4386,9 @@ MonoBehaviour:
     type: 3}
   fireEffect: {fileID: 2400653405192090566, guid: bfb3730a1341ee94c809e17ce13ce9ea,
     type: 3}
+  decalPrefab: {fileID: 7005673659403006650, guid: 3421f7568276b604096e2c9f87a3315c,
+    type: 3}
+  decalOffset: 0.01
   spawnPoint: {fileID: 1817680393}
   rayDistance: 1
   triggerAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
@@ -5045,7 +5048,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f7d67e35fc34dc5489409dc45111f275, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5085,7 +5088,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.013, y: 1.093, z: 0.417}
-  m_LocalScale: {x: 0.33344308, y: 0.03112753, z: 0.37212968}
+  m_LocalScale: {x: 0.33344308, y: 0.018542169, z: 0.37212968}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

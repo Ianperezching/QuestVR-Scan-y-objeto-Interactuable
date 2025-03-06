@@ -1,26 +1,31 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class WeldingGunOnActivate : MonoBehaviour
 {
-    [Header("Efectos de Partículas")]
-    public ParticleSystem sparkEffect;  // Chispas para soldadura
-    public ParticleSystem fireEffect;   // Fuego base constante
+    [Header("Particle Effects")]
+    public ParticleSystem sparkEffect;
+    public ParticleSystem fireEffect;
 
-    [Header("Configuración")]
-    public Transform spawnPoint;        // Punto de origen de efectos
-    [SerializeField] private float rayDistance = 1.0f; // Distancia de detección
+    [Header("Decal Settings")]
+    public GameObject decalPrefab;
+    public float decalOffset = 0.01f;
 
-    [Header("Controles")]
-    [SerializeField] private InputActionReference triggerAction; // Acción del gatillo
+    [Header("References")]
+    public Transform spawnPoint;
+    [SerializeField] private float rayDistance = 1.0f;
 
-    private ParticleSystem currentFire;   // Referencia al fuego activo
-    private ParticleSystem currentSparks; // Referencia a chispas activas
-    private bool isTriggerActive = false; // Estado del gatillo
+    [Header("Input Settings")]
+    [SerializeField] private InputActionReference triggerAction;
+
+    private ParticleSystem currentFire;
+    private ParticleSystem currentSparks;
+    private List<GameObject> allDecals = new List<GameObject>();
+    private bool isTriggerActive = false;
 
     void Start()
     {
-        // Configurar eventos de entrada
         triggerAction.action.performed += _ => StartWelding();
         triggerAction.action.canceled += _ => StopWelding();
     }
@@ -36,17 +41,14 @@ public class WeldingGunOnActivate : MonoBehaviour
 
     void OnDestroy()
     {
-        // Limpiar eventos de entrada
         triggerAction.action.performed -= _ => StartWelding();
         triggerAction.action.canceled -= _ => StopWelding();
     }
 
-    // ========== LÓGICA PRINCIPAL ========== //
     private void StartWelding()
     {
         isTriggerActive = true;
 
-        // Activar fuego constante
         if (currentFire == null)
         {
             currentFire = Instantiate(fireEffect, spawnPoint);
@@ -58,7 +60,6 @@ public class WeldingGunOnActivate : MonoBehaviour
     {
         isTriggerActive = false;
 
-        // Detener efectos
         if (currentFire != null)
         {
             currentFire.Stop();
@@ -67,10 +68,8 @@ public class WeldingGunOnActivate : MonoBehaviour
         DestroySparks();
     }
 
-    // ========== FUNCIONES AUXILIARES ========== //
     private void UpdateFirePosition()
     {
-        // Mantener el fuego en la punta de la pistola
         if (currentFire != null)
         {
             currentFire.transform.position = spawnPoint.position;
@@ -88,7 +87,30 @@ public class WeldingGunOnActivate : MonoBehaviour
             rayDistance
         ) && hit.collider.CompareTag("Joinable");
 
-        ManageSparks(hitJoinable, hit.point);
+        if (hitJoinable)
+        {
+            ManageSparks(true, hit.point);
+            CreateDecal(hit);
+        }
+        else
+        {
+            ManageSparks(false, Vector3.zero);
+        }
+    }
+
+    private void CreateDecal(RaycastHit hit)
+    {
+        GameObject newDecal = Instantiate(
+            decalPrefab,
+            hit.point + hit.normal * decalOffset,
+            Quaternion.LookRotation(-hit.normal)
+        );
+
+        // Configurar decal
+        newDecal.transform.SetParent(hit.collider.transform);
+        float randomScale = Random.Range(0.8f, 1.2f);
+        newDecal.transform.localScale = Vector3.one * randomScale;
+        allDecals.Add(newDecal);
     }
 
     private void ManageSparks(bool shouldSpawn, Vector3 position)
@@ -121,12 +143,21 @@ public class WeldingGunOnActivate : MonoBehaviour
         }
     }
 
-    // ========== DEBUG ========== //
+    // Método para limpiar todos los decales (opcional)
+    public void ClearAllDecals()
+    {
+        foreach (GameObject decal in allDecals)
+        {
+            if (decal != null) Destroy(decal);
+        }
+        allDecals.Clear();
+    }
+
     void OnDrawGizmos()
     {
         if (isTriggerActive)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.cyan;
             Gizmos.DrawRay(spawnPoint.position, spawnPoint.forward * rayDistance);
         }
     }
