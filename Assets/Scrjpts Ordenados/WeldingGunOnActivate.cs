@@ -72,8 +72,12 @@ public class WeldingGunOnActivate : MonoBehaviour
     {
         if (currentFire != null)
         {
+            // Usar posición y rotación GLOBAL del spawnPoint
             currentFire.transform.position = spawnPoint.position;
             currentFire.transform.rotation = spawnPoint.rotation;
+
+            // Si el fuego mira en dirección contraria, invertir eje Z
+            // currentFire.transform.rotation *= Quaternion.Euler(0, 180, 0);
         }
     }
 

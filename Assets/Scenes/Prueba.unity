@@ -4277,6 +4277,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb069ee3d2154a49a2586ec3b95b39c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainUICanvas: {fileID: 958172914}
+  toggleUIAction: {fileID: 5786135607111492923, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
   calculateButton: {fileID: 326764488}
   gun1Button: {fileID: 2142489308}
   gun2Button: {fileID: 1637615647}

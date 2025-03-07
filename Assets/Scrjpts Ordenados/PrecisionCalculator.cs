@@ -51,9 +51,9 @@ public class PrecisionCalculator : MonoBehaviour
 
         // Calcular puntuación
         float angleScore = CalculateScore(angles, 80, 90);
-        float arcScore = CalculateScore(arcLengths, 1.5f, 3f);
-        float speedScore = CalculateScore(speeds, 0.4f, 1f);
-        float totalScore = angleScore + arcScore + speedScore + (precision / 5f);
+        float arcScore = CalculateScore(arcLengths, 0.01f, 0.1f);
+        float speedScore = CalculateScore(speeds, 0.01f, 0.1f);
+        float totalScore = angleScore + arcScore + speedScore + (precision / 4f);
 
         // Evaluar aprobación
         bool approved = gameSettings.dificultad switch
