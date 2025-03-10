@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private WeldingStatsRecorder statsRecorder;
     [SerializeField] private SphereSpawner spawner;
+    [SerializeField] private GameSettings gameSettings;
 
 
     private bool isUIVisible = true;
@@ -32,7 +33,9 @@ public class UIManager : MonoBehaviour
       
         toggleUIAction.action.performed += _ => ToggleUI();
 
-        
+        difficultyDisplay.text = gameSettings.dificultad;
+        modeDisplay.text = gameSettings.modo;
+
         mainUICanvas.SetActive(true);
     }
 

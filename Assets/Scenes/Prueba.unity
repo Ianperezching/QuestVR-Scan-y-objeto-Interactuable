@@ -1042,7 +1042,7 @@ Transform:
   m_GameObject: {fileID: 236780295}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.278, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4287,6 +4287,7 @@ MonoBehaviour:
   difficultyDisplay: {fileID: 160648502}
   statsRecorder: {fileID: 1114855981}
   spawner: {fileID: 1114855986}
+  gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!114 &1114855983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4337,6 +4338,7 @@ MonoBehaviour:
   angleText: {fileID: 1685833555}
   arcLengthText: {fileID: 856615115}
   speedText: {fileID: 72580393}
+  worldScale: 1
 --- !u!114 &1114855986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4393,7 +4395,7 @@ MonoBehaviour:
     type: 3}
   decalOffset: 0.01
   spawnPoint: {fileID: 1817680393}
-  rayDistance: 1
+  rayDistance: 0.23
   triggerAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
 --- !u!1 &1118615114

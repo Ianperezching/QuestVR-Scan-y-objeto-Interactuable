@@ -18,6 +18,10 @@ public class PrecisionCalculator : MonoBehaviour
     [SerializeField] private TMP_Text arcLengthText;
     [SerializeField] private TMP_Text speedText;
 
+    [Header("Scale Settings")]
+    [SerializeField] private float worldScale = 0.3f;      // Escala del mundo (0.3 = 30% escala real)
+    [SerializeField] private float displayMultiplier = 100f; // Convertir metros a centímetros
+
     public void CalculatePrecision(List<GameObject> spheres, List<float> angles, List<float> arcLengths, List<float> speeds)
     {
         if (spheres.Count == 0)
@@ -27,7 +31,7 @@ public class PrecisionCalculator : MonoBehaviour
             return;
         }
 
-        // Calcular precisión en línea
+        // 1. Calcular precisión en la línea de soldadura
         Vector3 lineDirection = (puntoB.position - puntoA.position).normalized;
         int inLineCount = 0;
 
@@ -35,27 +39,32 @@ public class PrecisionCalculator : MonoBehaviour
         {
             if (sphere == null) continue;
 
-            Vector3 sphereDirection = sphere.transform.position - puntoA.position;
-            float distance = Vector3.Cross(lineDirection, sphereDirection).magnitude;
-            if (distance <= tolerance) inLineCount++;
+            Vector3 spherePos = sphere.transform.position;
+            float distanceToLine = Vector3.Cross(lineDirection, spherePos - puntoA.position).magnitude;
+            if (distanceToLine <= tolerance) inLineCount++;
         }
 
-        // Calcular promedios
+        // 2. Calcular métricas base
         float precision = (float)inLineCount / spheres.Count * 100f;
         float avgAngle = angles.Count > 0 ? angles.Average() : 0f;
-        float avgArcLength = arcLengths.Count > 0 ? arcLengths.Average() : 0f;
-        float avgSpeed = speeds.Count > 0 ? speeds.Average() : 0f;
 
-        // Actualizar UI
-        UpdateMetricsDisplay(precision, avgAngle, avgArcLength, avgSpeed);
+        // 3. Aplicar escalado y conversión a centímetros
+        float scaledArcLength = arcLengths.Count > 0 ?
+            arcLengths.Average() * worldScale * displayMultiplier : 0f;
 
-        // Calcular puntuación
+        float scaledSpeed = speeds.Count > 0 ?
+            speeds.Average() * worldScale * displayMultiplier : 0f;
+
+        // 4. Actualizar UI
+        UpdateMetricsDisplay(precision, avgAngle, scaledArcLength, scaledSpeed);
+
+        // 5. Calcular puntuación con valores sin escalar para UI
         float angleScore = CalculateScore(angles, 80, 90);
-        float arcScore = CalculateScore(arcLengths, 0.01f, 0.1f);
-        float speedScore = CalculateScore(speeds, 0.01f, 0.1f);
+        float arcScore = CalculateScore(arcLengths, 0.1f / worldScale, 1f / worldScale);
+        float speedScore = CalculateScore(speeds, 3f / worldScale, 6f / worldScale);
         float totalScore = angleScore + arcScore + speedScore + (precision / 4f);
 
-        // Evaluar aprobación
+        // 6. Determinar resultado final
         bool approved = gameSettings.dificultad switch
         {
             "Dificil" => totalScore >= 90,
@@ -68,26 +77,28 @@ public class PrecisionCalculator : MonoBehaviour
 
     private void UpdateMetricsDisplay(float precision, float angle, float arcLength, float speed)
     {
-        precisionText.text = $"Precision: {precision:F2}%";
-        angleText.text = $"Avg Angle: {angle:F2}°";
-        arcLengthText.text = $"Arc Length: {arcLength:F2}m";
-        speedText.text = $"Speed: {speed:F2}m/s";
+        precisionText.text = $"Precisión: {precision:F2}%";
+        angleText.text = $"Ángulo: {angle:F2}°";
+        arcLengthText.text = $"Longitud: {arcLength:F2} cm";
+        speedText.text = $"Velocidad: {speed:F2} cm/s";
     }
 
     private void ResetMetricsDisplay()
     {
-        precisionText.text = "Precision: 0.00%";
-        angleText.text = "Avg Angle: 0.00°";
-        arcLengthText.text = "Arc Length: 0.00m";
-        speedText.text = "Speed: 0.00m/s";
+        precisionText.text = "Precisión: 0.00%";
+        angleText.text = "Ángulo: 0.00°";
+        arcLengthText.text = "Longitud: 0.00 cm";
+        speedText.text = "Velocidad: 0.00 cm/s";
     }
 
     private float CalculateScore(List<float> values, float min, float max)
     {
         if (values.Count == 0) return 0;
+
         float average = values.Average();
-        float midpoint = (min + max) / 2;
-        float score = 20 - (Mathf.Abs(average - midpoint)) * 20 / (max - min);
+        float distanceFromIdeal = Mathf.Abs(average - (min + max) / 2);
+        float score = 20 - (distanceFromIdeal * 20 / (max - min));
+
         return Mathf.Clamp(score, 0, 20);
-    } 
+    }
 }
