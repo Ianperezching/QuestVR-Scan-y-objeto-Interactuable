@@ -26,7 +26,6 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHABLEND_ON
-  - _EMISSION
   - _FADING_ON
   - _REQUIRE_UV2
   m_InvalidKeywords:
@@ -135,7 +134,7 @@ Material:
     - _DstBlend: 10
     - _DstBlendAlpha: 10
     - _EdgeSize: 0.2
-    - _EmissionEnabled: 1
+    - _EmissionEnabled: 0
     - _FlipbookBlending: 1
     - _FlipbookMode: 1
     - _GlossMapScale: 1

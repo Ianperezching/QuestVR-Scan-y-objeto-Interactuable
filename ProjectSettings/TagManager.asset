@@ -8,17 +8,18 @@ TagManager:
   - Joinable
   - WeldingGun
   - WeldingSphere
+  - Metal
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Metal
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Interactable
+  - HandLeft
+  - HandRight
   - 
   - 
   - 
