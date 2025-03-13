@@ -9,11 +9,14 @@ EditorBuildSettings:
     path: Assets/ProyectoAlonzo/Scenes/MainVR.unity
     guid: 42f7bbf575918f6459e97ff4094ce810
   - enabled: 1
-    path: Assets/Scenes/Menu.unity
-    guid: c6b25de07157f9d4ea1ebca9fda14b41
+    path: Assets/Scenes/Proyecto Combinado.unity
+    guid: f4bf07208044585459e54f8b542dc46d
   - enabled: 1
     path: Assets/Scenes/Prueba.unity
     guid: 4f26f74e8db2b844394c9e75796cae2a
+  - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: c6b25de07157f9d4ea1ebca9fda14b41
   - enabled: 1
     path: Assets/Scenes/Simulador.unity
     guid: 99c9720ab356a0642a771bea13969a05

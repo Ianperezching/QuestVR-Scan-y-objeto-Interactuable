@@ -19,8 +19,8 @@ public class PrecisionCalculator : MonoBehaviour
     [SerializeField] private TMP_Text speedText;
 
     [Header("Scale Settings")]
-    [SerializeField] private float worldScale = 0.3f;      // Escala del mundo (0.3 = 30% escala real)
-    [SerializeField] private float displayMultiplier = 100f; // Convertir metros a centímetros
+    [SerializeField] private float worldScale = 0.3f;      
+    [SerializeField] private float displayMultiplier = 100f;
 
     public void CalculatePrecision(List<GameObject> spheres, List<float> angles, List<float> arcLengths, List<float> speeds)
     {

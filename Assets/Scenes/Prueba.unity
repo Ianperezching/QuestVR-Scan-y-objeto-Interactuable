@@ -2310,7 +2310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07aadb7ec35551c44a56009b6614e377, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  togglePlanesAction: {fileID: -3325929930529446861, guid: c348712bda248c246b8c49b3db54643f,
+  togglePlanesAction: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
 --- !u!1 &611435247
 GameObject:
@@ -4339,6 +4339,7 @@ MonoBehaviour:
   arcLengthText: {fileID: 856615115}
   speedText: {fileID: 72580393}
   worldScale: 1
+  displayMultiplier: 100
 --- !u!114 &1114855986
 MonoBehaviour:
   m_ObjectHideFlags: 0
