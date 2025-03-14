@@ -2152,6 +2152,7 @@ GameObject:
   - component: {fileID: 566792629}
   - component: {fileID: 566792628}
   - component: {fileID: 566792631}
+  - component: {fileID: 566792632}
   m_Layer: 0
   m_Name: XR Origin (XR Rig)
   m_TagString: Untagged
@@ -2221,6 +2222,20 @@ MonoBehaviour:
   m_PlanePrefab: {fileID: 5006205699711845098, guid: d99b4291585ec6049aab76b489a953a7,
     type: 3}
   m_DetectionMode: -1
+--- !u!114 &566792632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566792627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07aadb7ec35551c44a56009b6614e377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  togglePlanesAction: {fileID: -2451817823360165880, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
 --- !u!1 &611435247
 GameObject:
   m_ObjectHideFlags: 0
@@ -6682,7 +6697,7 @@ MonoBehaviour:
   creditosPanel: {fileID: 1509555760}
   dificultadPanel: {fileID: 1397614585}
   modoPanel: {fileID: 1614778226}
-  CambiodeScena: Prueba
+  CambiodeScena: MainVR
   gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!1 &1799138010
 GameObject:

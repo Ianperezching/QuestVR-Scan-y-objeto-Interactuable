@@ -7,22 +7,20 @@ using UnityEngine.UI;
 
 public class PistolaSphereCastMerge : MonoBehaviour
 {
-    public float sphereRadius = 1.0f; // Radio del SphereCast
-    public float maxDistance = 5.0f;  // Distancia máxima del SphereCast
-    public LayerMask layerMask; // Define qué capas detectar
+    public float sphereRadius = 1.0f;
+    public float maxDistance = 5.0f;
+    public LayerMask layerMask;
     private List<GameObject> detectedObjects = new List<GameObject>();
     public Transform pivot;
     bool Press;
     public ParticleSystem Spark;
- 
-    [SerializeField] private InputActionReference triggerAction; // Referencia al botón del gatillo
+
+    [SerializeField] private InputActionReference triggerAction;
     Vector3 normales = Vector3.zero;
     public bool IsGizmo = false;
     float FrameRate = 0;
     public float Rate;
     public ObjectPoolManager _ObjectPoolManager;
-
-
 
     private NewPart currentPart;
     public Text voltageText;
@@ -30,9 +28,8 @@ public class PistolaSphereCastMerge : MonoBehaviour
     public Text timeText;
     public Text resultText;
     public Image panelImage;
-    public Sprite defaultImage;  // Imagen por defecto
-    public List<NewPartInfo> partInfos; // Lista de cubos con imágenes
-
+    public Sprite defaultImage;
+    public List<NewPartInfo> partInfos;
 
     [System.Serializable]
     public class NewPartInfo
@@ -41,28 +38,38 @@ public class PistolaSphereCastMerge : MonoBehaviour
         public Sprite partImage;
     }
 
-
-    /////
-    // Variables de soldadura
     public float voltage = 22.0f;
     public float wireSpeed = 385f;
     public string weldingResult = "65% regular";
 
-    public bool IsWelding() => Press;
-    public float GetVoltage() => voltage;
-    public float GetWireSpeed() => wireSpeed;
-    public string GetWeldingResult() => weldingResult;
-    /////
+    [Header("Parámetros de Rendimiento")]
+    public float velocidadActual;
+    public float anguloActual;
+    public float distanciaActual;
+    public float estabilidadActual;
+    private Vector3 posicionAnterior;
+    private Queue<Vector3> posicionesRecientes = new Queue<Vector3>();
+    private const int muestrasEstabilidad = 10;
 
+    // Estadísticas de soldadura
+    private float totalWeldingTime = 0f;
+    private float correctSpheresTime = 0f;
+    private float totalSpeed = 0f;
+    private float totalAngle = 0f;
+    private float totalDistance = 0f;
+    private float totalStability = 0f;
+    private int sampleCount = 0;
 
-
+    void Start()
+    {
+        posicionAnterior = pivot.position;
+        posicionesRecientes.Enqueue(pivot.position);
+        ResetStatistics();
+    }
 
     void FixedUpdate()
     {
-
-        // Detectar si el gatillo del controlador está presionado
         Press = (triggerAction.action.ReadValue<float>() > 0.2f);
-        Debug.Log("Press: " + Press); // Depuración del gatillo
 
         if (Press)
         {
@@ -85,13 +92,18 @@ public class PistolaSphereCastMerge : MonoBehaviour
             if (detectedObjects.Count == 2)
             {
                 MergeObjects(detectedObjects[0], detectedObjects[1]);
+                correctSpheresTime += Time.fixedDeltaTime;
             }
+
+            totalWeldingTime += Time.fixedDeltaTime;
 
             if (detectedObjects.Count > 0)
             {
-                RaycastHit hit = hits[0]; // Toma el primer impacto
-                Quaternion rotation = Quaternion.LookRotation(normales, Vector3.up);
+                RaycastHit hit = hits[0];
+                CalcularParametrosAdicionales(hit);
+                ActualizarUI();
 
+                Quaternion rotation = Quaternion.LookRotation(normales, Vector3.up);
                 Spark.transform.position = hit.point;
                 Spark.transform.rotation = rotation;
 
@@ -102,7 +114,6 @@ public class PistolaSphereCastMerge : MonoBehaviour
                 }
                 FrameRate += Time.deltaTime;
 
-                Debug.Log("Activando partículas en: " + Spark.transform.position);
                 if (!Spark.isPlaying)
                 {
                     Spark.Play();
@@ -114,9 +125,126 @@ public class PistolaSphereCastMerge : MonoBehaviour
             if (Spark.isPlaying)
             {
                 Spark.Stop();
-                Debug.Log("Deteniendo partículas");
             }
         }
+    }
+
+    void CalcularParametrosAdicionales(RaycastHit hit)
+    {
+        // Cálculo de velocidad
+        Vector3 desplazamiento = pivot.position - posicionAnterior;
+        velocidadActual = desplazamiento.magnitude / Time.fixedDeltaTime;
+        posicionAnterior = pivot.position;
+
+        // Cálculo de ángulo
+        Vector3 direccionPistola = pivot.forward;
+        Vector3 normalSuperficie = hit.normal;
+        anguloActual = Vector3.Angle(direccionPistola, normalSuperficie);
+
+        // Cálculo de distancia
+        distanciaActual = Vector3.Distance(pivot.position, hit.point);
+
+        // Cálculo de estabilidad
+        posicionesRecientes.Enqueue(pivot.position);
+        if (posicionesRecientes.Count > muestrasEstabilidad)
+            posicionesRecientes.Dequeue();
+
+        estabilidadActual = CalcularVariacionTrayectoria();
+
+        // Acumular datos para estadísticas
+        totalSpeed += velocidadActual;
+        totalAngle += anguloActual;
+        totalDistance += distanciaActual;
+        totalStability += estabilidadActual;
+        sampleCount++;
+    }
+
+    float CalcularVariacionTrayectoria()
+    {
+        Vector3 sumaDirecciones = Vector3.zero;
+        Vector3[] posiciones = posicionesRecientes.ToArray();
+
+        if (posiciones.Length < 2) return 0f;
+
+        for (int i = 1; i < posiciones.Length; i++)
+        {
+            sumaDirecciones += (posiciones[i] - posiciones[i - 1]).normalized;
+        }
+
+        Vector3 direccionPromedio = sumaDirecciones / (posiciones.Length - 1);
+        float variacionTotal = 0f;
+
+        for (int i = 1; i < posiciones.Length; i++)
+        {
+            Vector3 direccionActual = (posiciones[i] - posiciones[i - 1]).normalized;
+            variacionTotal += Vector3.Angle(direccionActual, direccionPromedio);
+        }
+
+        return variacionTotal / (posiciones.Length - 1);
+    }
+
+    void ActualizarUI()
+    {
+        speedText.text = $"Velocidad: {velocidadActual:F2} m/s";
+        voltageText.text = $"Ángulo: {anguloActual:F2}°";
+        timeText.text = $"Distancia: {distanciaActual:F2} m";
+        resultText.text = $"Estabilidad: {estabilidadActual:F2}°";
+    }
+
+    public void CalculateResults()
+    {
+        if (sampleCount == 0 || totalWeldingTime == 0)
+        {
+            resultText.text = "No hay datos de soldadura";
+            return;
+        }
+
+        float avgSpeed = totalSpeed / sampleCount;
+        float avgAngle = totalAngle / sampleCount;
+        float avgDistance = totalDistance / sampleCount;
+        float avgStability = totalStability / sampleCount;
+        float precision = (correctSpheresTime / totalWeldingTime) * 100f;
+
+        float score = CalculateScore(precision, avgSpeed, avgAngle, avgDistance, avgStability);
+        bool aprobado = score >= 70f;
+
+        resultText.text = $"PRECISIÓN: {precision:F1}%\n" +
+                        $"VELOCIDAD: {avgSpeed:F2} m/s\n" +
+                        $"ÁNGULO: {avgAngle:F2}°\n" +
+                        $"DISTANCIA: {avgDistance:F2} m\n" +
+                        $"ESTABILIDAD: {avgStability:F2}°\n\n" +
+                        $"PUNTUACIÓN FINAL: {score:F0}/100\n" +
+                        $"RESULTADO: {(aprobado ? "APROBADO" : "REPROBADO")}";
+    }
+
+    private float CalculateScore(float precision, float speed, float angle, float distance, float stability)
+    {
+        float precisionScore = precision;
+        float speedScore = Mathf.Clamp(100f - Mathf.Abs(speed - 0.5f) * 100f, 0f, 100f);
+        float angleScore = Mathf.Clamp(100f - Mathf.Abs(angle - 90f), 0f, 100f);
+        float distanceScore = Mathf.Clamp(100f - distance * 50f, 0f, 100f);
+        float stabilityScore = Mathf.Clamp(100f - stability * 10f, 0f, 100f);
+
+        return Mathf.Clamp(
+            (precisionScore * 0.5f) +
+            (speedScore * 0.2f) +
+            (angleScore * 0.2f) +
+            (distanceScore * 0.1f) +
+            (stabilityScore * 0.1f),
+            0f, 100f
+        );
+    }
+
+    public void ResetStatistics()
+    {
+        totalWeldingTime = 0f;
+        correctSpheresTime = 0f;
+        totalSpeed = 0f;
+        totalAngle = 0f;
+        totalDistance = 0f;
+        totalStability = 0f;
+        sampleCount = 0;
+        resultText.text = "Estadísticas reiniciadas";
     }
 
     void MergeObjects(GameObject obj1, GameObject obj2)
@@ -124,7 +252,6 @@ public class PistolaSphereCastMerge : MonoBehaviour
         NewPart part1 = obj1.GetComponent<NewPart>();
         NewPart part2 = obj2.GetComponent<NewPart>();
         if (part1 == null || part2 == null) return;
-        
 
         if (part1.weight > part2.weight)
         {
@@ -132,10 +259,8 @@ public class PistolaSphereCastMerge : MonoBehaviour
         }
         else
         {
-            //Debug.Log("part2: "+part2.name + " AbsorbPiece-> part1: " + part1.name);
             part2.AbsorbPiece(part1);
-        }      
-
+        }
     }
 
     private void OnDrawGizmos()
@@ -146,33 +271,24 @@ public class PistolaSphereCastMerge : MonoBehaviour
         Gizmos.DrawWireSphere(pivot.position + pivot.forward * maxDistance, sphereRadius);
 
         normales = Vector3.zero;
-      
-        RaycastHit[] hits;
-        Vector3 direction = pivot.forward; // Dirección del SphereCast
+        RaycastHit[] hits = Physics.SphereCastAll(pivot.position, sphereRadius, pivot.forward, maxDistance, layerMask);
 
-        hits = Physics.SphereCastAll(pivot.position, sphereRadius, direction, maxDistance, layerMask);
- 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("Metal")) // Asegurar que sean cubos
-            {            
+            if (hit.collider.CompareTag("Metal"))
+            {
                 normales += hit.normal;
             }
         }
 
-        if (hits.Length > 0) // Si detecta exactamente dos cubos
-        {
-            // Calcular la rotación para que Spark mire en la dirección de la normal
-            Quaternion rotation = Quaternion.LookRotation(normales);
-
-            // Ajustar la posición y rotación de las partículas
-            Spark.transform.position = hits[0].point; // Coloca las partículas en el punto de impacto
-            Spark.transform.rotation = rotation;      // Orienta las partículas según la normal
-
-        }
         if (hits.Length > 0)
         {
             Gizmos.DrawLine(hits[0].point, hits[0].point + normales * 12);
-        }   
+        }
     }
+
+    public bool IsWelding() => Press;
+    public float GetVoltage() => voltage;
+    public float GetWireSpeed() => wireSpeed;
+    public string GetWeldingResult() => weldingResult;
 }

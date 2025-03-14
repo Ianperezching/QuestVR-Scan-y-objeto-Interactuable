@@ -1,53 +1,81 @@
-using System.Collections.Generic;
-using UnityEngine;
+锘縰sing UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 public class PrecisionCalculators : MonoBehaviour
 {
     [Header("Referencias")]
-    public Transform PuntoA;        // Punto inicial de la l韓ea gu韆
-    public Transform PuntoB;        // Punto final de la l韓ea gu韆
-    public TMP_Text ResultadoTexto; // TextMeshPro para mostrar el resultado
-    public float Tolerancia = 0.1f; // Distancia m醲ima aceptada para precisi髇
+    public Transform PuntoA;
+    public Transform PuntoB;
+    public TMP_Text ResultadoTexto;
+    public float Tolerancia = 0.1f;
+    public PistolaSphereCastMerge pistola;
 
-    private List<GameObject> esferasCreadas = new List<GameObject>(); // Lista de esferas
+    [Header("Par谩metros 脫ptimos")]
+    public float velocidadOptima = 0.15f;
+    public float anguloOptimo = 30f;
+    public float estabilidadOptima = 5f;
 
-    /// <summary>
-    /// Agregar esfera a la lista cuando se crea.
-    /// </summary>
+    private List<GameObject> esferasCreadas = new List<GameObject>();
+
     public void AgregarEsfera(GameObject esfera)
     {
         esferasCreadas.Add(esfera);
     }
 
-    /// <summary>
-    /// Calcular la precisi髇 de las esferas respecto a la l韓ea gu韆.
-    /// </summary>
-    public void CalcularPrecision()
+    public void CalcularPrecisionFinal()
     {
         if (esferasCreadas.Count == 0)
         {
-            ResultadoTexto.text = "No hay esferas para calcular.";
+            ResultadoTexto.text = "No hay soldaduras realizadas";
             return;
         }
 
-        int dentroDeTolerancia = 0;
+        // Precisi贸n de alineaci贸n
+        int dentroTolerancia = CalcularAlineacion();
+        float precisionAlineacion = (float)dentroTolerancia / esferasCreadas.Count * 100f;
+
+        // Precisi贸n t茅cnica
+        float puntajeTotal = CalcularPuntajeTotal(precisionAlineacion);
+
+        MostrarResultado(puntajeTotal, precisionAlineacion);
+    }
+
+    int CalcularAlineacion()
+    {
+        int dentro = 0;
         Vector3 direccionLinea = (PuntoB.position - PuntoA.position).normalized;
 
-        foreach (GameObject esfera in esferasCreadas)
+        foreach (GameObject SoldaduraDecal in esferasCreadas)
         {
-            if (esfera == null) continue;
+            if (SoldaduraDecal == null) continue;
 
-            Vector3 direccionEsfera = esfera.transform.position - PuntoA.position;
+            Vector3 direccionEsfera = SoldaduraDecal.transform.position - PuntoA.position;
             float distanciaPerpendicular = Vector3.Cross(direccionLinea, direccionEsfera).magnitude / direccionLinea.magnitude;
 
-            if (distanciaPerpendicular <= Tolerancia)
-            {
-                dentroDeTolerancia++;
-            }
+            if (distanciaPerpendicular <= Tolerancia) dentro++;
         }
+        return dentro;
+    }
 
-        float porcentajePrecision = (float)dentroDeTolerancia / esferasCreadas.Count * 100f;
-        ResultadoTexto.text = $"Precisi髇: {porcentajePrecision:F2}%";
+    float CalcularPuntajeTotal(float precisionAlin)
+    {
+        float puntajeVelocidad = Mathf.Clamp01(1 - Mathf.Abs(pistola.velocidadActual - velocidadOptima) / velocidadOptima);
+        float puntajeAngulo = Mathf.Clamp01(1 - Mathf.Abs(pistola.anguloActual - anguloOptimo) / anguloOptimo);
+        float puntajeEstabilidad = Mathf.Clamp01(1 - pistola.estabilidadActual / estabilidadOptima);
+
+        return (precisionAlin / 100f * 0.4f) +
+              (puntajeVelocidad * 0.2f) +
+              (puntajeAngulo * 0.2f) +
+              (puntajeEstabilidad * 0.2f);
+    }
+
+    void MostrarResultado(float puntajeTotal, float precisionAlin)
+    {
+        ResultadoTexto.text = $"<size=120%><b>PRECISI脫N TOTAL: {puntajeTotal * 100:F1}%</b></size>\n\n" +
+                             $"Alineaci贸n: {precisionAlin:F1}%\n" +
+                             $"Velocidad: {pistola.velocidadActual:F2} m/s (脫ptimo: {velocidadOptima:F2})\n" +
+                             $"脕ngulo: {pistola.anguloActual:F1}掳 (脫ptimo: {anguloOptimo:F1})\n" +
+                             $"Estabilidad: {pistola.estabilidadActual:F2}掳 (脫ptimo: 鈮estabilidadOptima:F1})";
     }
 }

@@ -13,8 +13,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] private Button calculateButton;
-    [SerializeField] private Button gun1Button;
-    [SerializeField] private Button gun2Button;
+    
 
     [Header("Text Displays")]
     [SerializeField] private TMP_Text modeDisplay;
@@ -69,8 +68,6 @@ public class UIManager : MonoBehaviour
             )
         );
 
-        gun1Button.onClick.AddListener(() => gunController.SwitchGun(true));
-        gun2Button.onClick.AddListener(() => gunController.SwitchGun(false));
 
     }
 }

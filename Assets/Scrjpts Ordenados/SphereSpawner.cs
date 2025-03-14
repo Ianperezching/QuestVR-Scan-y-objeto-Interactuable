@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Linq;
 
 public class SphereSpawner : MonoBehaviour
 {
@@ -11,9 +10,6 @@ public class SphereSpawner : MonoBehaviour
     [SerializeField] private GameObject grabbableSphere;
     [SerializeField] private float spawnInterval = 0.3f;
     [SerializeField] private WeldingGunController gunController;
-
-    [Header("Work Area")]
-    [SerializeField] private WorkAreaChecker workAreaChecker;
 
     private bool isSpawning = false;
     private List<GameObject> spawnedSpheres = new List<GameObject>();
@@ -28,7 +24,7 @@ public class SphereSpawner : MonoBehaviour
     {
         statsRecorder = GetComponent<WeldingStatsRecorder>();
 
-        if (gunController == null || activateAction == null || grabbableSphere == null || workAreaChecker == null)
+        if (gunController == null || activateAction == null || grabbableSphere == null)
             Debug.LogError("¡Faltan referencias en el Inspector!");
 
         activateAction.action.performed += StartSpawning;
@@ -43,58 +39,30 @@ public class SphereSpawner : MonoBehaviour
 
         while (isSpawning)
         {
-            if (workAreaChecker.IsInWorkArea)
-            {
-                Transform currentTip = gunController.CurrentGunTip;
+            Transform currentTip = gunController.CurrentGunTip;
 
-                
-                GameObject sphere = Instantiate(
-                    grabbableSphere,
-                    currentTip.position,
-                    currentTip.rotation
-                );
-                sphere.tag = "WeldingSphere";
-                spawnedSpheres.Add(sphere);
+            GameObject sphere = Instantiate(
+                grabbableSphere,
+                currentTip.position,
+                currentTip.rotation
+            );
+            sphere.tag = "WeldingSphere";
+            spawnedSpheres.Add(sphere);
 
-              
-                Physics.SyncTransforms();
-                Debug.Log($"[Spawner] Esfera creada: {sphere.name}");
+            Physics.SyncTransforms();
+            Debug.Log($"[Spawner] Esfera creada: {sphere.name}");
 
-               
-                float angle = Vector3.Angle(currentTip.forward, Vector3.up);
-                float arcLength = Physics.Raycast(currentTip.position, -currentTip.up, out RaycastHit hit)
-                    ? hit.distance
-                    : 0f;
-                float speed = CalculateSpeed();
+            float angle = Vector3.Angle(currentTip.forward, Vector3.up);
+            float arcLength = Physics.Raycast(currentTip.position, -currentTip.up, out RaycastHit hit)
+                ? hit.distance
+                : 0f;
+            float speed = CalculateSpeed();
 
-                statsRecorder.RecordStats(angle, arcLength, speed);
-                lastSpawnPosition = currentTip.position;
-                lastSpawnTime = Time.time;
-            }
+            statsRecorder.RecordStats(angle, arcLength, speed);
+            lastSpawnPosition = currentTip.position;
+            lastSpawnTime = Time.time;
 
-           
-            yield return null;
-            CleanupOutOfAreaSpheres();
             yield return new WaitForSeconds(spawnInterval);
-        }
-    }
-
-    private void CleanupOutOfAreaSpheres()
-    {
-        foreach (var sphere in spawnedSpheres.ToList())
-        {
-            if (sphere == null)
-            {
-                spawnedSpheres.Remove(sphere);
-                continue;
-            }
-
-            if (!workAreaChecker.SpheresInArea.Contains(sphere))
-            {
-                Debug.Log($"[Spawner] Destruyendo esfera fuera del área: {sphere.name}");
-                spawnedSpheres.Remove(sphere);
-                Destroy(sphere);
-            }
         }
     }
 

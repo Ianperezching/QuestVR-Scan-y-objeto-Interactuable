@@ -4211,11 +4211,9 @@ GameObject:
   - component: {fileID: 1114855985}
   - component: {fileID: 1114855984}
   - component: {fileID: 1114855983}
-  - component: {fileID: 1114855982}
-  - component: {fileID: 1114855981}
-  - component: {fileID: 1114855986}
   - component: {fileID: 1114855987}
   - component: {fileID: 1114855988}
+  - component: {fileID: 1114855989}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4250,44 +4248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa413881507ded44bba9883890bb22ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1114855981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114855977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28e6d52d519886e4d918b2b65ff1afd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RecordedAngles: []
-  RecordedArcLengths: []
-  SpeedMeasurements: []
---- !u!114 &1114855982
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114855977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdb069ee3d2154a49a2586ec3b95b39c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainUICanvas: {fileID: 958172914}
-  toggleUIAction: {fileID: 5786135607111492923, guid: c348712bda248c246b8c49b3db54643f,
-    type: 3}
-  calculateButton: {fileID: 326764488}
-  gun1Button: {fileID: 2142489308}
-  gun2Button: {fileID: 1637615647}
-  modeDisplay: {fileID: 187274356}
-  difficultyDisplay: {fileID: 160648502}
-  statsRecorder: {fileID: 1114855981}
-  spawner: {fileID: 1114855986}
-  gameSettings: {fileID: 11400000, guid: 58ade911d5bfced4d83af09745e7e761, type: 2}
 --- !u!114 &1114855983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4302,9 +4262,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeController: {fileID: 566792634}
   gunController: {fileID: 1114855987}
-  sphereSpawner: {fileID: 1114855986}
+  sphereSpawner: {fileID: 0}
   precisionCalculator: {fileID: 1114855985}
-  uiManager: {fileID: 1114855982}
+  uiManager: {fileID: 0}
 --- !u!114 &1114855984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4340,25 +4300,6 @@ MonoBehaviour:
   speedText: {fileID: 72580393}
   worldScale: 1
   displayMultiplier: 100
---- !u!114 &1114855986
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114855977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6ea24d974818af45968d7f88e28924b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activateAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
-    type: 3}
-  grabbableSphere: {fileID: 4685026924482430454, guid: 9b1cdadc9d86d664687e0daae0215b71,
-    type: 3}
-  spawnInterval: 0.2
-  gunController: {fileID: 1114855987}
-  workAreaChecker: {fileID: 813065641}
 --- !u!114 &1114855987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4399,6 +4340,25 @@ MonoBehaviour:
   rayDistance: 0.23
   triggerAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
+--- !u!114 &1114855989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114855977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6ea24d974818af45968d7f88e28924b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activateAction: {fileID: 8055346647131381135, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  grabbableSphere: {fileID: 4685026924482430454, guid: 9b1cdadc9d86d664687e0daae0215b71,
+    type: 3}
+  spawnInterval: 0.2
+  gunController: {fileID: 1114855987}
+  workAreaChecker: {fileID: 813065641}
 --- !u!1 &1118615114
 GameObject:
   m_ObjectHideFlags: 0

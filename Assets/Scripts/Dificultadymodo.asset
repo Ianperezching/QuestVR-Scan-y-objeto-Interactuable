@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666e7352995fb95459b01f4759999cca, type: 3}
   m_Name: Dificultadymodo
   m_EditorClassIdentifier: 
-  dificultad: 
-  modo: 
+  dificultad: Facil
+  modo: Practica
